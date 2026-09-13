@@ -485,7 +485,7 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
       if($("f-first")) $("f-first").value = f;
       if($("f-email")) $("f-email").value = e;
 
-      hook({firstName:f, email:e, stage:"video gate", source:"Law Firm VSL"});
+      hook({firstName:f, email:e, stage:"video gate", source:"Law Firm VSL - Video Gate"});
 
       fbTrack("ViewContent", {content_name:"VSL Video Gate"});
 
@@ -595,7 +595,7 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
       firstName:first, lastName:last, email:email, phone:phone,
       firm:$("f-firm").value.trim(), city:$("f-city").value.trim(),
       state:$("f-st").value.trim(), revenueOver300k:state.revenue,
-      stage:"booking form", source:"Law Firm VSL"
+      stage:"booking form", source:"Law Firm VSL - Booking Form"
     });
 
     fbTrack("Lead", {content_name:"Booking Form"});

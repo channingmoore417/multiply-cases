@@ -1,6 +1,6 @@
 {
   "$comment": "Contract for the Multiply VSL + booking funnel. Source of truth for auto-building GHL workflows. Generated from index.html and booking.html.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "location": {
     "name": "Multiply Local",
     "locationId": "rqfDKEvso1ofKq2wgy5d"
@@ -32,7 +32,7 @@
     "firm":      { "target": "custom", "ghlField": "contact.business_name", "customFieldId": "DaBUZbRuhX9bHqTJIkkH", "label": "Business Name", "preexisting": true },
     "revenueOver300k": { "target": "custom", "ghlField": "contact.revenue_over_300k", "customFieldId": "DClWdYbE64yE5FphvJjc", "label": "Revenue Over $300k", "dataType": "SINGLE_OPTIONS", "options": ["Yes", "No"] },
     "stage":     { "target": "custom", "ghlField": "contact.lead_stage", "customFieldId": "SiygpuhWwyrbYZOx4pFp", "label": "Lead Stage", "dataType": "SINGLE_OPTIONS", "options": ["video gate", "booking form", "booking page"] },
-    "source":    { "target": "standard", "ghlField": "source", "$comment": "Native contact source attribute, not a custom field." }
+    "source":    { "target": "standard", "ghlField": "source", "$comment": "Native contact source attribute, not a custom field. Unique per form — sufficient to parse the payload on its own." }
   },
 
   "payloads": [
@@ -40,12 +40,12 @@
       "id": "video_gate",
       "page": "index.html",
       "trigger": "Name + email submitted to unlock the VSL video",
-      "discriminator": { "stage": "video gate" },
+      "discriminator": { "stage": "video gate", "source": "Law Firm VSL - Video Gate" },
       "fields": {
         "firstName": { "type": "string", "required": true },
         "email":     { "type": "string", "required": true, "validation": ".+@.+\\..+" },
         "stage":     { "type": "string", "const": "video gate" },
-        "source":    { "type": "string", "const": "Law Firm VSL" }
+        "source":    { "type": "string", "const": "Law Firm VSL - Video Gate" }
       },
       "absentFields": ["lastName", "phone", "firm", "city", "state", "revenueOver300k"],
       "$comment": "PARTIAL LEAD. Create-contact step must not require lastName or phone."
@@ -54,7 +54,7 @@
       "id": "vsl_booking_form",
       "page": "index.html",
       "trigger": "Step 4 'See Available Times' clicked",
-      "discriminator": { "stage": "booking form" },
+      "discriminator": { "stage": "booking form", "source": "Law Firm VSL - Booking Form" },
       "fields": {
         "firstName": { "type": "string", "required": true },
         "lastName":  { "type": "string", "required": true },
@@ -65,14 +65,14 @@
         "state":     { "type": "string", "required": true },
         "revenueOver300k": { "type": "string", "enum": ["Yes", "No"], "nullable": true, "$comment": "null when the booker is reached by scrolling to #book, skipping step 1." },
         "stage":     { "type": "string", "const": "booking form" },
-        "source":    { "type": "string", "const": "Law Firm VSL" }
+        "source":    { "type": "string", "const": "Law Firm VSL - Booking Form" }
       }
     },
     {
       "id": "standalone_booking_page",
       "page": "booking.html",
       "trigger": "Step 4 'See Available Times' clicked",
-      "discriminator": { "stage": "booking page" },
+      "discriminator": { "stage": "booking page", "source": "Booking Page" },
       "fields": {
         "firstName": { "type": "string", "required": true },
         "lastName":  { "type": "string", "required": true },
