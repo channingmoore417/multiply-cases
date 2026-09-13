@@ -104,6 +104,23 @@ footer{background:var(--sand);border-top:3px solid var(--ink);margin-top:56px;pa
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1276653241236782');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 <body>
 
@@ -266,6 +283,11 @@ footer{background:var(--sand);border-top:3px solid var(--ink);margin-top:56px;pa
                 firstName:"", lastName:"", email:"", phone:"" };
   var $ = function(id){ return document.getElementById(id); };
 
+  /* Meta Pixel: guarded so a blocked or slow pixel never breaks the funnel */
+  function fbTrack(ev, params){
+    try{ if(window.fbq) window.fbq("track", ev, params || {}); }catch(e){}
+  }
+
   CFG.checkout = "https://multiplycases.com/checkout";
 
   (function(){
@@ -280,6 +302,7 @@ footer{background:var(--sand);border-top:3px solid var(--ink);margin-top:56px;pa
               "&firm=" + encodeURIComponent($("f-firm").value.trim()) +
               "&city=" + encodeURIComponent($("f-city").value.trim()) +
               "&state=" + encodeURIComponent($("f-st").value.trim());
+      fbTrack("InitiateCheckout", {value:497, currency:"USD", content_name:"Multiply $497/mo"});
       location.href = CFG.checkout + q;
     });
   })();
@@ -354,6 +377,8 @@ footer{background:var(--sand);border-top:3px solid var(--ink);margin-top:56px;pa
       stage:"booking page", source:"Booking Page"
     });
 
+    fbTrack("Lead", {content_name:"Booking Page"});
+
     setTimeout(function(){
       btn.disabled = false; btn.textContent = "See Available Times";
       buildDays(); show(5); loadSlots();
@@ -427,7 +452,8 @@ footer{background:var(--sand);border-top:3px solid var(--ink);margin-top:56px;pa
       startTime:state.slot, timezone:CFG.timezone, calendarId:CFG.calendarId
     })
       .catch(function(e){ if(!CFG.demo) throw e; })
-      .then(function(){ $("when").textContent = pretty(state.slot) + " Central"; show(6); })
+      .then(function(){ fbTrack("Schedule", {content_name:"Strategy Call"});
+                        $("when").textContent = pretty(state.slot) + " Central"; show(6); })
       .catch(function(){
         btn.disabled = false; btn.textContent = "Confirm";
         $("err5").textContent = "Someone took that slot. Pick another.";
