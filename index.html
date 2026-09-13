@@ -181,6 +181,7 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 
@@ -418,9 +419,16 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
                firstName:"", lastName:"", email:"", phone:"" };
   var $ = function(id){ return document.getElementById(id); };
 
-  /* Meta Pixel: guarded so a blocked or slow pixel never breaks the funnel */
+  /* Analytics: every call guarded so a blocked, slow or plan-rejected
+     tracker can never break the funnel. */
   function fbTrack(ev, params){
     try{ if(window.fbq) window.fbq("track", ev, params || {}); }catch(e){}
+  }
+  function fbCustom(ev, params){
+    try{ if(window.fbq) window.fbq("trackCustom", ev, params || {}); }catch(e){}
+  }
+  function vaTrack(ev, data){
+    try{ if(window.va) window.va("event", {name:ev, data:data || {}}); }catch(e){}
   }
 
   CFG.checkout = "https://multiplycases.com/checkout";
@@ -457,6 +465,7 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
     if(!player || !v) return;
     player.addEventListener("click", function(){
       fbTrack("ViewContent", {content_name:"VSL Video"});
+      vaTrack("video_play", {});
       player.style.display = "none";
       v.style.zIndex = "1";
       v.muted = false;
@@ -489,6 +498,12 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
     function report(pct){
       if(fired[pct]) return;
       fired[pct] = true;
+
+      /* Meta: builds retargetable audiences, e.g. watched 50%+ but never booked */
+      fbCustom("VideoProgress", {percent: pct, content_name: "Law Firm VSL"});
+      /* Vercel: aggregate watch-rate alongside pageviews */
+      vaTrack("video_progress", {percent: pct});
+
       try{
         fetch(HOOK, {
           method:"POST", headers:{"Content-Type":"application/json"}, keepalive:true,
@@ -561,6 +576,7 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
     });
 
     fbTrack("Lead", {content_name:"Booking Form"});
+    vaTrack("lead", {source:"vsl"});
 
     setTimeout(function(){
       btn.disabled = false; btn.textContent = "See Available Times";

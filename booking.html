@@ -121,6 +121,7 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 
@@ -283,9 +284,16 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
                 firstName:"", lastName:"", email:"", phone:"" };
   var $ = function(id){ return document.getElementById(id); };
 
-  /* Meta Pixel: guarded so a blocked or slow pixel never breaks the funnel */
+  /* Analytics: every call guarded so a blocked, slow or plan-rejected
+     tracker can never break the funnel. */
   function fbTrack(ev, params){
     try{ if(window.fbq) window.fbq("track", ev, params || {}); }catch(e){}
+  }
+  function fbCustom(ev, params){
+    try{ if(window.fbq) window.fbq("trackCustom", ev, params || {}); }catch(e){}
+  }
+  function vaTrack(ev, data){
+    try{ if(window.va) window.va("event", {name:ev, data:data || {}}); }catch(e){}
   }
 
   CFG.checkout = "https://multiplycases.com/checkout";
@@ -378,6 +386,7 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
     });
 
     fbTrack("Lead", {content_name:"Booking Page"});
+    vaTrack("lead", {source:"booking_page"});
 
     setTimeout(function(){
       btn.disabled = false; btn.textContent = "See Available Times";
