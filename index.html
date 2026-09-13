@@ -147,7 +147,15 @@ footer{background:var(--sand);border-top:3px solid var(--ink);padding:44px 0 30p
 .foot-bar{border-top:2px solid var(--ink);margin-top:24px;padding-top:18px;display:flex;flex-wrap:wrap;gap:10px 20px;justify-content:space-between;font-size:13px}
 .foot-bar a{color:var(--ink)}
 
+/* ---------- hero CTA + form emphasis ---------- */
+.hero-cta{margin-top:30px}
+.btn-lg{font-size:21px;padding:23px 54px;margin-top:0}
+.book-eyebrow{display:inline-block;background:var(--red);color:var(--white);font-family:"Oswald",sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;padding:8px 20px;margin-bottom:18px}
+.booker{box-shadow:12px 12px 0 var(--red)}
+
 @media (max-width:720px){
+  .booker{box-shadow:6px 6px 0 var(--red)}
+  .btn-lg{width:100%;font-size:18px;padding:20px 24px}
   .gets,.cases,.fields{grid-template-columns:1fr}
   .picker{grid-template-columns:1fr}
   .days{border-right:none;border-bottom:3px solid var(--ink);max-height:210px}
@@ -201,14 +209,20 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
       </div>
     </button>
   </div>
+
+  <div class="hero-cta">
+    <a class="btn btn-lg" href="#book">Get Started</a>
+    <p class="fine">Takes about 60 seconds &middot; No contract &middot; Cancel anytime</p>
+  </div>
 </div>
 
 
 
 <div class="close-band" id="book">
   <div class="wrap narrow" style="text-align:center">
+    <div class="book-eyebrow">Start Here</div>
     <h2>Ready To See How This Works For Your Business?</h2>
-    <p class="h2-sub" style="color:#b9b2ac">A few quick questions, then pick a time.</p>
+    <p class="h2-sub">A few quick questions, then pick a time.</p>
   </div>
   <div class="wrap">
     <div class="booker">
