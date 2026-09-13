@@ -147,6 +147,11 @@ footer{background:var(--sand);border-top:3px solid var(--ink);padding:44px 0 30p
 .foot-bar{border-top:2px solid var(--ink);margin-top:24px;padding-top:18px;display:flex;flex-wrap:wrap;gap:10px 20px;justify-content:space-between;font-size:13px}
 .foot-bar a{color:var(--ink)}
 
+/* ---------- A/B headline test ---------- */
+.v-b{display:none}
+[data-ab="b"] .v-a{display:none}
+[data-ab="b"] .v-b{display:block}
+
 /* ---------- hero CTA + form emphasis ---------- */
 .hero-cta{margin-top:30px}
 .btn-lg{font-size:21px;padding:23px 54px;margin-top:0}
@@ -164,6 +169,24 @@ footer{background:var(--sand);border-top:3px solid var(--ink);padding:44px 0 30p
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
+<script>
+/* A/B headline test. Sticky for 30 days so a returning visitor never sees
+   the page change under them, which would poison the result. Runs inline and
+   synchronously: the attribute must be on <html> before the body parses. */
+(function(){
+  var KEY = "ab_headline", v = null;
+  try{
+    var m = document.cookie.match(/(?:^|;\s*)ab_headline=([ab])/);
+    v = m && m[1];
+    if(!v){
+      v = Math.random() < 0.5 ? "a" : "b";
+      document.cookie = KEY + "=" + v + ";path=/;max-age=2592000;SameSite=Lax";
+    }
+  }catch(e){ v = "a"; }        /* cookies blocked: everyone sees the control */
+  window.__AB = v;
+  if(v === "b") document.documentElement.setAttribute("data-ab", "b");
+})();
+</script>
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -194,7 +217,8 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
 
 <div class="hero wrap narrow">
   <div class="eyebrow">Small Market Law Firms</div>
-  <h1>You&rsquo;re Losing Cases To Firms Worse Than Yours. We Fix That For <span class="price">$497/mo</span></h1>
+  <h1 class="v-a">You&rsquo;re Losing Cases To Firms Worse Than Yours. We Fix That For <span class="price">$497/mo</span></h1>
+  <h1 class="v-b">A Premium Website, Google Reviews And AI Follow-Up. Live In 7 Days For <span class="price">$497/mo</span></h1>
   <p class="sub">A premium website, Google reviews, AI automation, and your Google Business Profile set up properly, so the people searching in your town find you first.</p>
   <p class="terms">Live within 7 days. No contract, no setup fees, cancel anytime.</p>
   <p class="watch-line">Watch the free 5 minute training below.</p>
@@ -420,14 +444,19 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
 
   /* Analytics: every call guarded so a blocked, slow or plan-rejected
      tracker can never break the funnel. */
+  function withVariant(o){
+    var out = o || {};
+    try{ out.variant = window.__AB || "a"; }catch(e){}
+    return out;
+  }
   function fbTrack(ev, params){
-    try{ if(window.fbq) window.fbq("track", ev, params || {}); }catch(e){}
+    try{ if(window.fbq) window.fbq("track", ev, withVariant(params)); }catch(e){}
   }
   function fbCustom(ev, params){
-    try{ if(window.fbq) window.fbq("trackCustom", ev, params || {}); }catch(e){}
+    try{ if(window.fbq) window.fbq("trackCustom", ev, withVariant(params)); }catch(e){}
   }
   function vaTrack(ev, data){
-    try{ if(window.va) window.va("event", {name:ev, data:data || {}}); }catch(e){}
+    try{ if(window.va) window.va("event", {name:ev, data:withVariant(data)}); }catch(e){}
   }
 
   CFG.checkout = "https://multiplycases.com/checkout";
@@ -571,7 +600,8 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
       firstName:first, lastName:last, email:email, phone:phone,
       firm:$("f-firm").value.trim(), city:$("f-city").value.trim(),
       state:$("f-st").value.trim(), revenueOver300k:state.revenue,
-      stage:"booking form", source:"Law Firm VSL - Booking Form"
+      stage:"booking form", source:"Law Firm VSL - Booking Form",
+      variant:(window.__AB || "a")
     });
 
     fbTrack("Lead", {content_name:"Booking Form"});
