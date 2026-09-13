@@ -1,6 +1,6 @@
 {
   "$comment": "Contract for the Multiply VSL + booking funnel. Source of truth for auto-building GHL workflows. Generated from index.html and booking.html.",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "location": {
     "name": "Multiply Local",
     "locationId": "rqfDKEvso1ofKq2wgy5d"
@@ -243,8 +243,8 @@
     }
   ],
   "endpoints": {
-    "$comment": "NOT IMPLEMENTED. Both 404 in production today; the pages fall back to demo mode.",
-    "implemented": false,
+    "$comment": "Implemented as Vercel serverless functions in api/. Requires the GHL_API_KEY env var.",
+    "implemented": true,
     "slots": {
       "method": "GET",
       "path": "/api/slots",
@@ -308,8 +308,29 @@
         "stage",
         "source"
       ],
-      "upstream": "GHL POST /calendars/events/appointments (upsert contact by email first)",
-      "$comment": "Booking data does NOT reach the webhook. Stitch to the contact created at step 4 via email."
+      "upstream": "POST /contacts/upsert (Version 2021-07-28), then POST /calendars/events/appointments (Version 2021-04-15)",
+      "$comment": "Booking data does NOT reach the webhook. Stitch to the contact created at step 4 via email.",
+      "statusCodes": {
+        "200": "booked; returns appointmentId and contactId",
+        "400": "validation failed (missing fields, bad email, start time in the past)",
+        "409": "slot taken since the picker loaded",
+        "502": "GHL upstream error",
+        "503": "GHL_API_KEY not configured"
+      }
+    },
+    "auth": {
+      "envVar": "GHL_API_KEY",
+      "type": "GHL Private Integration token",
+      "scopes": [
+        "calendars.readonly",
+        "calendars/events.write",
+        "contacts.write"
+      ],
+      "optionalOverrides": [
+        "GHL_LOCATION_ID",
+        "GHL_CALENDAR_ID",
+        "GHL_TIMEZONE"
+      ]
     }
   },
   "metaPixel": {
@@ -366,10 +387,10 @@
     ]
   },
   "warnings": [
+    "Booking is live against the GHL calendar. If GHL_API_KEY is unset the endpoints return 503 and the page shows an error rather than fake times - it no longer invents availability or fake confirmations.",
     "The video gate was removed \u2014 the VSL video now plays on click with no email capture. There is no longer any 'Law Firm VSL - Video Gate' payload.",
     "The 11-template 'Law Firm Nurture' sequence (GHL folder 6aa5a080a813792f40c2619b) has NO TRIGGER as of this version. It was fed by the video gate. Re-point it at the booking form or a new capture point before enabling it.",
     "video_progress fires with no email or name. It cannot create or match a contact.",
-    "Booking is in demo mode (demo:true). /api/slots and /api/book both 404. Calendar times are client-side random; Confirm shows a fake confirmation and creates no appointment.",
     "revenueOver300k can be absent entirely - the step-1 toggle is skippable.",
     "CFG.checkout points to https://multiplycases.com/checkout, which has no route and currently 404s."
   ]

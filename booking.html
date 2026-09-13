@@ -276,7 +276,6 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
     daysAhead  : 14,
     hook       : "https://services.leadconnectorhq.com/hooks/rqfDKEvso1ofKq2wgy5d/webhook-trigger/749926ef-c748-437e-bb09-e628767dfb0b",
     api        : { slots:"/api/slots", book:"/api/book" },
-    demo       : true   // set false once the endpoints are live
   };
 
   var LAST = 5;
@@ -423,7 +422,11 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
     get(CFG.api.slots + "?startDate=" + s + "&endDate=" + e +
         "&timezone=" + encodeURIComponent(CFG.timezone) + "&calendarId=" + CFG.calendarId)
       .then(function(d){ state.slotsByDay = normalise(d); })
-      .catch(function(){ if(CFG.demo) state.slotsByDay = demoSlots(); })
+      .catch(function(){
+        state.slotsByDay = {};
+        $("times").innerHTML = '<div class="times-msg">We could not load times right now. ' +
+          'Email hello@multiplylocal.com and we will get you booked.</div>';
+      })
       .then(function(){ var f = document.querySelector(".day"); if(f) f.click(); });
   }
   function normalise(data){
@@ -460,12 +463,16 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
       firstName:state.firstName, lastName:state.lastName,
       startTime:state.slot, timezone:CFG.timezone, calendarId:CFG.calendarId
     })
-      .catch(function(e){ if(!CFG.demo) throw e; })
       .then(function(){ fbTrack("Schedule", {content_name:"Strategy Call"});
                         $("when").textContent = pretty(state.slot) + " Central"; show(6); })
-      .catch(function(){
+      .catch(function(e){
         btn.disabled = false; btn.textContent = "Confirm";
-        $("err5").textContent = "Someone took that slot. Pick another.";
+        /* 409 means the slot went while they were deciding. Anything else is
+           our problem, and saying "someone took it" would be a lie that sends
+           them round the picker forever. */
+        $("err5").textContent = String(e && e.message) === "409"
+          ? "Someone just took that time. Pick another."
+          : "We could not confirm that booking. Email hello@multiplylocal.com and we will sort it out.";
       });
   });
 
@@ -482,17 +489,6 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
   function pretty(s){ var d=new Date(s);
     return d.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",timeZone:CFG.timezone}) +
       " at " + d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZone:CFG.timezone}); }
-  function demoSlots(){
-    var out={}, d=new Date(), made=0, hours=[9,10,11,13,14,15,16];
-    while(made < CFG.daysAhead){
-      d.setDate(d.getDate()+1);
-      if(d.getDay()===0||d.getDay()===6) continue;
-      out[iso(d)] = hours.filter(function(){ return Math.random()>0.35; }).map(function(h){
-        var s=new Date(d); s.setHours(h,0,0,0); return s.toISOString(); });
-      made++;
-    }
-    return out;
-  }
 })();
 </script>
 
