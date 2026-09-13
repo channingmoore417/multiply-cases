@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book A Call | Multiply</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{--red:#C23B2E;--red-deep:#9B2B20;--ink:#000000;--paper:#FAF7F2;--sand:#F5F0E8;--white:#FFFFFF;--muted:#4A4643;--line:#D8D1C7}
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0}
+body{background:var(--paper);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{width:100%;max-width:1040px;margin:0 auto;padding:0 24px}
+.narrow{max-width:760px}
+
+.alert{background:var(--red);color:var(--white);text-align:center;padding:11px 24px;font-family:"Oswald",sans-serif;font-weight:600;font-size:13.5px;letter-spacing:.06em;text-transform:uppercase}
+.masthead{border-bottom:3px solid var(--ink);padding:22px 0 20px;text-align:center}
+.wordmark{font-family:"Bebas Neue",sans-serif;font-size:34px;letter-spacing:.10em;line-height:1}
+.wordmark .x{color:var(--red)}
+.wordmark-sub{font-family:"Oswald",sans-serif;font-weight:500;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-top:7px}
+
+.top{padding:52px 0 0;text-align:center}
+h1{font-family:"Oswald",sans-serif;font-weight:700;font-size:clamp(28px,4.2vw,44px);line-height:1.1;text-wrap:balance}
+h1 .price{display:inline-block;background:var(--red);color:var(--white);padding:0 10px 3px}
+.eyebrow{font-family:"Oswald",sans-serif;font-weight:600;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:18px}
+.sub{font-size:17.5px;color:var(--muted);margin-top:14px}
+.terms{font-family:"Oswald",sans-serif;font-weight:500;font-size:14.5px;margin-top:18px}
+
+.booker{margin:34px 0 0;border:3px solid var(--ink);background:var(--paper)}
+.booker-steps{display:flex;border-bottom:3px solid var(--ink)}
+.bstep{flex:1;padding:12px 8px;text-align:center;font-family:"Oswald",sans-serif;font-weight:600;font-size:12px;letter-spacing:.14em;color:#8c8681;background:var(--sand)}
+.bstep + .bstep{border-left:3px solid var(--ink)}
+.bstep.on{background:var(--red);color:var(--white)}
+.bstep.done{background:var(--ink);color:var(--paper)}
+.bpane{padding:30px 28px;display:none}
+.bpane.on{display:block}
+.bpane h3{font-family:"Bebas Neue",sans-serif;font-size:30px;letter-spacing:.03em;text-align:center}
+.bpane .lead{text-align:center;color:var(--muted);font-size:15.5px;margin:6px 0 24px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;max-width:620px;margin:0 auto}
+.field{margin-bottom:16px}
+.field.full{grid-column:1 / -1}
+label{display:block;font-family:"Oswald",sans-serif;font-weight:500;font-size:12px;letter-spacing:.13em;text-transform:uppercase;margin-bottom:6px}
+input{width:100%;border:2px solid var(--ink);background:var(--white);padding:13px 14px;font-family:"DM Sans",sans-serif;font-size:16px}
+input:focus{outline:3px solid var(--red);outline-offset:0}
+.toggle{display:grid;grid-template-columns:1fr 1fr;max-width:620px;margin:0 auto}
+.toggle button{border:2px solid var(--ink);background:var(--white);padding:22px 10px;cursor:pointer;font-family:"Oswald",sans-serif;font-weight:600;font-size:16px;letter-spacing:.08em;text-transform:uppercase}
+.toggle button + button{border-left:none}
+.toggle button.on{background:var(--red);color:var(--white);border-color:var(--red)}
+.toggle button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.btn{display:inline-block;background:var(--red);color:var(--white);font-family:"Oswald",sans-serif;font-weight:700;font-size:17px;letter-spacing:.05em;text-transform:uppercase;padding:18px 34px;border:none;cursor:pointer;text-decoration:none;margin-top:20px;transition:background .16s ease;text-align:center}
+.btn:hover{background:var(--red-deep)}
+.btn:focus-visible{outline:4px solid var(--red);outline-offset:3px}
+.btn[disabled]{background:#8d8781;cursor:not-allowed}
+.actions{max-width:620px;margin:0 auto;text-align:center}
+.err{color:var(--red);font-size:14px;min-height:20px;margin-top:12px}
+.consent{font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:14px}
+.back{display:inline-block;margin-top:16px;background:none;border:none;cursor:pointer;font-family:"Oswald",sans-serif;font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:underline}
+.back:hover{color:var(--ink)}
+
+.picker{display:grid;grid-template-columns:220px 1fr;border-top:3px solid var(--ink);margin-top:6px}
+.days{border-right:3px solid var(--ink);max-height:420px;overflow:auto}
+.day{display:block;width:100%;text-align:left;background:var(--paper);border:none;border-bottom:2px solid var(--line);padding:14px 18px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:15.5px}
+.day:hover{background:var(--sand)}
+.day.on{background:var(--ink);color:var(--paper)}
+.day .dow{font-family:"Oswald",sans-serif;font-weight:600;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;display:block;color:var(--red)}
+.day.on .dow{color:#e7b6b0}
+.times{padding:18px;max-height:420px;overflow:auto}
+.times-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:12px}
+.slot{border:2px solid var(--ink);background:var(--white);padding:12px 6px;cursor:pointer;font-family:"Oswald",sans-serif;font-weight:600;font-size:14.5px}
+.slot:hover{background:var(--sand)}
+.slot.on{background:var(--red);color:var(--white);border-color:var(--red)}
+.times-msg{color:var(--muted);font-size:15px;padding:18px 4px;text-align:center}
+.fork{border-top:2px solid var(--line);margin-top:22px;padding-top:18px;text-align:center}
+.fork p{font-size:15px;color:var(--muted)}
+.fork a{color:var(--red);font-weight:700}
+.taken{border:2px solid var(--ink);background:var(--sand);padding:16px 18px;margin-bottom:20px;font-size:15.5px;text-align:center}
+.taken b{display:block;font-family:"Oswald",sans-serif;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:5px}
+.tz{text-align:center;font-size:13px;color:var(--muted);padding:14px 0 0}
+
+.confirmed{text-align:center;padding:46px 28px}
+.confirmed .mark{width:58px;height:58px;background:var(--red);color:var(--white);display:inline-flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:18px}
+.confirmed h3{font-family:"Bebas Neue",sans-serif;font-size:34px;letter-spacing:.03em}
+.confirmed .when{font-family:"Oswald",sans-serif;font-weight:700;font-size:21px;margin-top:12px}
+.confirmed p{color:var(--muted);margin-top:12px}
+
+.quote{margin:44px 0 0;border:3px solid var(--ink);background:var(--white);padding:30px 30px 24px}
+.quote .stars{color:#C9A227;font-size:18px;letter-spacing:.12em;display:block;margin-bottom:12px}
+.quote p{font-size:18px;line-height:1.5;font-weight:500}
+.quote .who{margin-top:18px;padding-top:14px;border-top:2px solid var(--line);font-family:"Oswald",sans-serif;font-weight:700;font-size:15px}
+.quote .who span{display:block;font-weight:500;font-size:13px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+footer{background:var(--sand);border-top:3px solid var(--ink);margin-top:56px;padding:36px 0 26px}
+.disc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.foot-bar{border-top:2px solid var(--ink);margin-top:20px;padding-top:16px;display:flex;flex-wrap:wrap;gap:10px 20px;justify-content:space-between;font-size:13px}
+.foot-bar a{color:var(--ink)}
+
+@media (max-width:720px){
+  .fields{grid-template-columns:1fr}
+  .picker{grid-template-columns:1fr}
+  .days{border-right:none;border-bottom:3px solid var(--ink);max-height:200px}
+  .bpane{padding:24px 18px}
+  .top{padding:40px 0 0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="alert">Attention: Law Firm Owners Above $300,000/yr</div>
+
+<header class="masthead">
+  <div class="wordmark">MULTI<span class="x">&times;</span>PLY</div>
+  <div class="wordmark-sub">Multiply Your Cases</div>
+</header>
+
+<div class="top wrap narrow">
+  <div class="eyebrow">Small Market Law Firms</div>
+  <h1>You Are Losing Cases To Firms That Are Not Better Than You. We Fix That For <span class="price">$497/mo</span></h1>
+  <p class="sub">A premium website, Google reviews, AI automation, and your Google Business Profile set up properly, so the people searching in your town find you first.</p>
+  <p class="sub" style="margin-top:8px">Thirty minutes on a call. We go through your market and what we would fix first.</p>
+  <p class="terms">$497 a month. Live in seven days. No setup fee, no contract, cancel anytime.</p>
+</div>
+
+<div class="wrap narrow">
+  <div class="booker">
+    <div class="booker-steps">
+      <div class="bstep on" id="tab1">1</div>
+      <div class="bstep" id="tab2">2</div>
+      <div class="bstep" id="tab3">3</div>
+      <div class="bstep" id="tab4">4</div>
+      <div class="bstep" id="tab5">5</div>
+    </div>
+
+    <div class="bpane on" id="pane1">
+      <h3>Is Your Firm Doing Over $300,000 A Year?</h3>
+      <p class="lead">We only work with firms that can take on more cases.</p>
+      <div class="actions">
+        <div class="toggle" id="f-rev" role="group" aria-label="Is your firm doing over $300,000 a year">
+          <button type="button" data-val="Yes">Yes</button>
+          <button type="button" data-val="No">Not yet</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bpane" id="pane2">
+      <h3>What City Is Your Firm In?</h3>
+      <p class="lead">So we can look at your market before we talk.</p>
+      <div class="fields">
+        <div class="field"><label for="f-city">City</label><input id="f-city" type="text" autocomplete="address-level2" placeholder="Tyler"></div>
+        <div class="field"><label for="f-st">State</label><input id="f-st" type="text" autocomplete="address-level1" placeholder="TX"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" data-next="3" style="width:100%">Next</button>
+        <div class="err" id="err2"></div>
+        <button class="back" data-back="1">Back</button>
+      </div>
+    </div>
+
+    <div class="bpane" id="pane3">
+      <h3>What Is The Firm Called?</h3>
+      <p class="lead">So we can look at your site and profile before we talk.</p>
+      <div class="fields">
+        <div class="field full"><label for="f-firm">Law firm name</label><input id="f-firm" type="text" autocomplete="organization" placeholder="Doe Law Firm"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" data-next="4" style="width:100%">Next</button>
+        <div class="err" id="err3"></div>
+        <button class="back" data-back="2">Back</button>
+      </div>
+    </div>
+
+    <div class="bpane" id="pane4">
+      <h3>Who Are We Talking To?</h3>
+      <p class="lead">Last step. Times load as soon as you continue.</p>
+      <div class="fields">
+        <div class="field"><label for="f-first">First name</label><input id="f-first" type="text" autocomplete="given-name" placeholder="Jane"></div>
+        <div class="field"><label for="f-last">Last name</label><input id="f-last" type="text" autocomplete="family-name" placeholder="Doe"></div>
+        <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" autocomplete="email" placeholder="you@firm.com"></div>
+        <div class="field"><label for="f-phone">Phone</label><input id="f-phone" type="tel" autocomplete="tel" placeholder="(337) 555-0100"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="to-times" style="width:100%">See Available Times</button>
+        <div class="err" id="err4"></div>
+        <p class="consent">By continuing you agree to receive calls, texts and emails from Multiply about your firm. Message and data rates may apply. Reply STOP to opt out, HELP for help.</p>
+        <button class="back" data-back="3">Back</button>
+      </div>
+    </div>
+
+    <div class="bpane" id="pane5">
+      <h3>Pick A Time</h3>
+      <p class="lead">Thirty minutes. We go through your market and what we would fix first.</p>
+      <div class="picker">
+        <div class="days" id="days"></div>
+        <div class="times" id="times"><div class="times-msg">Pick a day on the left.</div></div>
+      </div>
+      <p class="tz" id="tz"></p>
+      <div class="actions">
+        <button class="btn" id="confirm" style="width:100%" disabled>Confirm</button>
+        <div class="err" id="err5"></div>
+      </div>
+      <div class="fork" id="fork">
+        <p>Already know you want it? <a href="#" id="buy-now">Skip the call and start now</a> for $497 a month.</p>
+      </div>
+
+    </div>
+
+    <div class="bpane" id="pane6">
+      <div class="confirmed">
+        <div class="mark">&#10003;</div>
+        <h3>You Are Booked</h3>
+        <div class="when" id="when"></div>
+        <p>Check your email for the confirmation. We will text you a reminder before the call.</p>
+      </div>
+    </div>
+  </div>
+
+  <figure class="quote">
+    <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+    <blockquote><p>Channing offers knowledge in his field, fair prices and prompt responses. He's rebuilt our website, increased our website traffic and improved our search position on Google. Hands down recommend.</p></blockquote>
+    <figcaption class="who">Devin Fontenot, Attorney at Law<span>Lake Charles, Louisiana</span></figcaption>
+  </figure>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p class="disc"><b>Earnings disclaimer:</b> Any client results mentioned are the outcome of specific work in specific markets. They are not typical and are not a guarantee that you will achieve the same or similar results. Your results will vary and depend on many factors including your market, local competition, service quality, response times, and forces beyond anyone's control.</p>
+    <p class="disc">This site is not a part of the Facebook website or Meta Platforms, Inc. Additionally, this site is not endorsed by Facebook in any way. FACEBOOK is a trademark of Meta Platforms, Inc.</p>
+    <div class="foot-bar">
+      <span>&copy; 2026 Multiply. A service provided by Amplify Marketing SEO LLC.</span>
+      <span><a href="https://multiplylocal.com/privacy">Privacy Policy</a> &nbsp;|&nbsp; <a href="https://multiplylocal.com/terms">Terms</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =====================================================================
+     Standalone booking page. Calendar: "Multiply Your Business Call",
+     Multiply Local location. Lead capture goes to the GHL inbound webhook.
+
+       CFG.hook        fires a workflow that creates or updates the contact
+       GET  /api/slots ?startDate=<epochms>&endDate=<epochms>&timezone=
+                       GHL: GET /calendars/{calendarId}/free-slots
+       POST /api/book  {email,phone,firstName,lastName,startTime,timezone}
+                       upsert the contact, then
+                       GHL: POST /calendars/events/appointments
+
+     Prefill from email links:  /call?fn=Jane&ln=Doe&em=jane@firm.com
+     In GHL use  ?fn={{contact.first_name}}&em={{contact.email}}
+     ===================================================================== */
+  var CFG = {
+    calendarId : "vi7CsC1AbMZIkfKJ0I1u",
+    locationId : "rqfDKEvso1ofKq2wgy5d",
+    timezone   : "America/Chicago",
+    daysAhead  : 14,
+    hook       : "https://services.leadconnectorhq.com/hooks/rqfDKEvso1ofKq2wgy5d/webhook-trigger/749926ef-c748-437e-bb09-e628767dfb0b",
+    api        : { slots:"/api/slots", book:"/api/book" },
+    demo       : true   // set false once the endpoints are live
+  };
+
+  var LAST = 5;
+  var state = { revenue:null, slot:null, slotsByDay:{},
+                firstName:"", lastName:"", email:"", phone:"" };
+  var $ = function(id){ return document.getElementById(id); };
+
+  CFG.checkout = "https://multiplycases.com/checkout";
+
+  (function(){
+    var b = $("buy-now");
+    if(!b) return;
+    b.addEventListener("click", function(e){
+      e.preventDefault();
+      var q = "?fn=" + encodeURIComponent(state.firstName) +
+              "&ln=" + encodeURIComponent(state.lastName) +
+              "&em=" + encodeURIComponent(state.email) +
+              "&ph=" + encodeURIComponent(state.phone) +
+              "&firm=" + encodeURIComponent($("f-firm").value.trim()) +
+              "&city=" + encodeURIComponent($("f-city").value.trim()) +
+              "&state=" + encodeURIComponent($("f-st").value.trim());
+      location.href = CFG.checkout + q;
+    });
+  })();
+
+
+  /* prefill from the query string so email links skip typing */
+  (function(){
+    var q = new URLSearchParams(location.search);
+    var map = { fn:"f-first", ln:"f-last", em:"f-email", ph:"f-phone",
+                firm:"f-firm", city:"f-city", state:"f-st" };
+    Object.keys(map).forEach(function(k){
+      var v = q.get(k);
+      if(v && $(map[k])) $(map[k]).value = v;
+    });
+  })();
+
+  function show(n){
+    for(var i=1;i<=6;i++){ var p=$("pane"+i); if(p) p.classList.toggle("on", i===n); }
+    for(var t=1;t<=LAST;t++){
+      $("tab"+t).className = "bstep " + (t===n ? "on" : (t<n ? "done" : ""));
+    }
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  Array.prototype.forEach.call($("f-rev").querySelectorAll("button"), function(b){
+    b.addEventListener("click", function(){
+      Array.prototype.forEach.call($("f-rev").querySelectorAll("button"), function(x){ x.classList.remove("on"); });
+      b.classList.add("on");
+      state.revenue = b.dataset.val;
+      setTimeout(function(){ show(2); $("f-city").focus(); }, 180);
+    });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-next]"), function(b){
+    b.addEventListener("click", function(){
+      var n = parseInt(b.dataset.next, 10);
+      if(n === 3){
+        if(!$("f-city").value.trim() || !$("f-st").value.trim()){
+          $("err2").textContent = "City and state, then we can check availability."; return;
+        }
+        $("err2").textContent = "";
+      }
+      if(n === 4){
+        if(!$("f-firm").value.trim()){ $("err3").textContent = "The firm name, please."; return; }
+        $("err3").textContent = "";
+      }
+      show(n);
+    });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-back]"), function(b){
+    b.addEventListener("click", function(){ show(parseInt(b.dataset.back, 10)); });
+  });
+
+  $("to-times").addEventListener("click", function(){
+    var first = $("f-first").value.trim(), last = $("f-last").value.trim(),
+        email = $("f-email").value.trim(), phone = $("f-phone").value.trim();
+    if(!first || !last || !email || !phone){
+      $("err4").textContent = "Name, email and phone, then you are through."; return;
+    }
+    $("err4").textContent = "";
+    state.firstName = first; state.lastName = last;
+    state.email = email; state.phone = phone;
+
+    var btn = $("to-times");
+    btn.disabled = true; btn.textContent = "One moment";
+
+    hook({
+      firstName:first, lastName:last, email:email, phone:phone,
+      firm:$("f-firm").value.trim(), city:$("f-city").value.trim(),
+      state:$("f-st").value.trim(), revenueOver300k:state.revenue,
+      stage:"booking page", source:"Booking Page"
+    });
+
+    setTimeout(function(){
+      btn.disabled = false; btn.textContent = "See Available Times";
+      buildDays(); show(5); loadSlots();
+    }, 250);
+  });
+
+  function buildDays(){
+    var host = $("days"); host.innerHTML = "";
+    var d = new Date(), made = 0;
+    while(made < CFG.daysAhead){
+      d.setDate(d.getDate()+1);
+      if(d.getDay()===0 || d.getDay()===6) continue;
+      host.appendChild(dayBtn(new Date(d))); made++;
+    }
+  }
+  function dayBtn(d){
+    var key = iso(d);
+    var b = document.createElement("button");
+    b.type="button"; b.className="day"; b.dataset.key=key;
+    b.innerHTML = '<span class="dow">' + d.toLocaleDateString("en-US",{weekday:"long"}) +
+      '</span>' + d.toLocaleDateString("en-US",{month:"long",day:"numeric"});
+    b.addEventListener("click", function(){
+      Array.prototype.forEach.call(document.querySelectorAll(".day"), function(x){ x.classList.remove("on"); });
+      b.classList.add("on");
+      state.slot = null; $("confirm").disabled = true;
+      renderTimes(key);
+    });
+    return b;
+  }
+  function loadSlots(){
+    $("tz").textContent = "Times shown in Central Time.";
+    var s = Date.now(), e = s + (CFG.daysAhead+3)*86400000;
+    get(CFG.api.slots + "?startDate=" + s + "&endDate=" + e +
+        "&timezone=" + encodeURIComponent(CFG.timezone) + "&calendarId=" + CFG.calendarId)
+      .then(function(d){ state.slotsByDay = normalise(d); })
+      .catch(function(){ if(CFG.demo) state.slotsByDay = demoSlots(); })
+      .then(function(){ var f = document.querySelector(".day"); if(f) f.click(); });
+  }
+  function normalise(data){
+    var out = {}; if(!data) return out;
+    Object.keys(data).forEach(function(k){
+      if(data[k] && Array.isArray(data[k].slots)) out[k] = data[k].slots;
+      else if(Array.isArray(data[k])) out[k] = data[k];
+    });
+    return out;
+  }
+  function renderTimes(key){
+    var host = $("times"), slots = state.slotsByDay[key] || [];
+    if(!slots.length){ host.innerHTML = '<div class="times-msg">Nothing open that day. Try another.</div>'; return; }
+    var grid = document.createElement("div"); grid.className = "times-grid";
+    slots.forEach(function(s){
+      var t = document.createElement("button");
+      t.type="button"; t.className="slot";
+      t.textContent = new Date(s).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZone:CFG.timezone});
+      t.addEventListener("click", function(){
+        Array.prototype.forEach.call(grid.querySelectorAll(".slot"), function(x){ x.classList.remove("on"); });
+        t.classList.add("on"); state.slot = s; $("confirm").disabled = false;
+      });
+      grid.appendChild(t);
+    });
+    host.innerHTML = ""; host.appendChild(grid);
+  }
+
+  $("confirm").addEventListener("click", function(){
+    if(!state.slot) return;
+    var btn = $("confirm");
+    btn.disabled = true; btn.textContent = "Booking";
+    post(CFG.api.book, {
+      email:state.email, phone:state.phone,
+      firstName:state.firstName, lastName:state.lastName,
+      startTime:state.slot, timezone:CFG.timezone, calendarId:CFG.calendarId
+    })
+      .catch(function(e){ if(!CFG.demo) throw e; })
+      .then(function(){ $("when").textContent = pretty(state.slot) + " Central"; show(6); })
+      .catch(function(){
+        btn.disabled = false; btn.textContent = "Confirm";
+        $("err5").textContent = "Someone took that slot. Pick another.";
+      });
+  });
+
+  function hook(payload){
+    try{
+      fetch(CFG.hook, {method:"POST", headers:{"Content-Type":"application/json"},
+                       body:JSON.stringify(payload), keepalive:true}).catch(function(){});
+    }catch(e){}
+  }
+  function get(u){ return fetch(u).then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); }); }
+  function post(u,b){ return fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); }); }
+  function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  function pretty(s){ var d=new Date(s);
+    return d.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",timeZone:CFG.timezone}) +
+      " at " + d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZone:CFG.timezone}); }
+  function demoSlots(){
+    var out={}, d=new Date(), made=0, hours=[9,10,11,13,14,15,16];
+    while(made < CFG.daysAhead){
+      d.setDate(d.getDate()+1);
+      if(d.getDay()===0||d.getDay()===6) continue;
+      out[iso(d)] = hours.filter(function(){ return Math.random()>0.35; }).map(function(h){
+        var s=new Date(d); s.setHours(h,0,0,0); return s.toISOString(); });
+      made++;
+    }
+    return out;
+  }
+})();
+</script>
+
+</body>
+</html>
