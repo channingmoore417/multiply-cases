@@ -39,15 +39,6 @@ h1 .price{display:inline-block;background:var(--red);color:var(--white);padding:
 .play-btn svg{margin-left:5px}
 .player:hover .play-btn{transform:scale(1.06)}
 .play-label{font-family:"Oswald",sans-serif;font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--white);background:rgba(0,0,0,.62);padding:7px 16px}
-.veil{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:24px;z-index:60}
-.veil.open{display:flex}
-.vmodal{background:var(--paper);border:3px solid var(--ink);width:100%;max-width:460px}
-.vmodal-head{background:var(--ink);color:var(--paper);padding:20px 24px;position:relative}
-.vmodal-head h3{font-family:"Bebas Neue",sans-serif;font-size:27px;letter-spacing:.03em}
-.vmodal-head p{font-size:14.5px;color:#b9b2ac;margin-top:4px}
-.vmodal-close{position:absolute;top:0;right:0;background:none;border:none;color:var(--paper);font-size:26px;line-height:1;padding:16px 18px;cursor:pointer}
-.vmodal-body{padding:24px}
-.vmodal .btn{width:100%;margin-top:6px}
 .player-note{text-align:center;font-size:14px;color:var(--muted);margin-top:12px}
 .hero-cta{text-align:center;padding-bottom:62px}
 
@@ -315,21 +306,6 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
   </div>
 </div>
 
-<div class="veil" id="veil" role="dialog" aria-modal="true" aria-labelledby="veil-title">
-  <div class="vmodal">
-    <div class="vmodal-head">
-      <h3 id="veil-title">Watch The Free Training</h3>
-      <p>Enter your info below.</p>
-      <button class="vmodal-close" id="veil-close" aria-label="Close">&times;</button>
-    </div>
-    <div class="vmodal-body">
-      <div class="field"><label for="g-first">First name</label><input id="g-first" type="text" autocomplete="given-name" placeholder="Jane"></div>
-      <div class="field"><label for="g-email">Email</label><input id="g-email" type="email" autocomplete="email" placeholder="you@firm.com"></div>
-      <button class="btn" id="g-go">Watch Now</button>
-      <div class="err" id="g-err"></div>
-    </div>
-  </div>
-</div>
 
 <section class="band">
   <div class="wrap">
@@ -423,7 +399,6 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
   };
 
   var LAST = 5;
-  var gateInfo = { firstName:"", email:"" };
 
   var state = { revenue:null, slot:null, slotsByDay:{},
                firstName:"", lastName:"", email:"", phone:"" };
@@ -462,43 +437,18 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
     $("book").scrollIntoView({block:"start"});
   }
 
-  /* video gate — popup on play, answers stay prefilled downstream */
+  /* click the poster to play — no gate, plays immediately */
   (function(){
-    var veil = $("veil"), player = $("player");
-    if(!veil || !player) return;
-    function open(){ veil.classList.add("open"); $("g-first").focus(); }
-    function close(){ veil.classList.remove("open"); player.focus(); }
-    player.addEventListener("click", open);
-    $("veil-close").addEventListener("click", close);
-    veil.addEventListener("click", function(e){ if(e.target === veil) close(); });
-    document.addEventListener("keydown", function(e){
-      if(e.key === "Escape" && veil.classList.contains("open")) close();
-    });
-    $("g-go").addEventListener("click", function(){
-      var f = $("g-first").value.trim(), e = $("g-email").value.trim();
-      if(!f || !/.+@.+\..+/.test(e)){
-        $("g-err").textContent = "First name and a working email, then it plays.";
-        return;
-      }
-      $("g-err").textContent = "";
-      gateInfo.firstName = f; gateInfo.email = e;
-      if($("f-first")) $("f-first").value = f;
-      if($("f-email")) $("f-email").value = e;
-
-      hook({firstName:f, email:e, stage:"video gate", source:"Law Firm VSL - Video Gate"});
-
-      fbTrack("ViewContent", {content_name:"VSL Video Gate"});
-
-      close();
-      var overlay = $("player"); if(overlay) overlay.style.display = "none";
-      var v = $("vsl");
-      if(v){
-        v.style.zIndex = "1";
-        v.muted = false;
-        v.controls = true;
-        v.currentTime = 0;
-        v.play().catch(function(){ v.muted = true; v.play().catch(function(){}); });
-      }
+    var player = $("player"), v = $("vsl");
+    if(!player || !v) return;
+    player.addEventListener("click", function(){
+      fbTrack("ViewContent", {content_name:"VSL Video"});
+      player.style.display = "none";
+      v.style.zIndex = "1";
+      v.muted = false;
+      v.controls = true;
+      v.currentTime = 0;
+      v.play().catch(function(){ v.muted = true; v.play().catch(function(){}); });
     });
   })();
 
@@ -529,9 +479,7 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
         fetch(HOOK, {
           method:"POST", headers:{"Content-Type":"application/json"}, keepalive:true,
           body: JSON.stringify({
-            email: (gateInfo && gateInfo.email) || "",
-            firstName: (gateInfo && gateInfo.firstName) || "",
-            stage: "video watched", videoPercent: pct, source: "Law Firm VSL"
+            stage: "video watched", videoPercent: pct, source: "Law Firm VSL - Video Watch"
           })
         }).catch(function(){});
       }catch(e){}

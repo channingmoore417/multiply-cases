@@ -1,6 +1,6 @@
 {
   "$comment": "Contract for the Multiply VSL + booking funnel. Source of truth for auto-building GHL workflows. Generated from index.html and booking.html.",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "location": {
     "name": "Multiply Local",
     "locationId": "rqfDKEvso1ofKq2wgy5d"
@@ -19,75 +19,229 @@
     "deliveryGuarantee": "none",
     "$comment": "Fire-and-forget from the browser (keepalive, all errors swallowed). Never assume delivery."
   },
-
   "upsertKey": "email",
-
   "fieldMap": {
-    "firstName": { "target": "standard", "ghlField": "firstName" },
-    "lastName":  { "target": "standard", "ghlField": "lastName" },
-    "email":     { "target": "standard", "ghlField": "email" },
-    "phone":     { "target": "standard", "ghlField": "phone", "transform": "e164", "$comment": "Free text on the page. Placeholder format (337) 555-0100." },
-    "city":      { "target": "standard", "ghlField": "city" },
-    "state":     { "target": "standard", "ghlField": "state", "transform": "normalizeUsState", "$comment": "Free text. Expect TX, Texas, tx, and blanks." },
-    "firm":      { "target": "custom", "ghlField": "contact.business_name", "customFieldId": "DaBUZbRuhX9bHqTJIkkH", "label": "Business Name", "preexisting": true },
-    "revenueOver300k": { "target": "custom", "ghlField": "contact.revenue_over_300k", "customFieldId": "DClWdYbE64yE5FphvJjc", "label": "Revenue Over $300k", "dataType": "SINGLE_OPTIONS", "options": ["Yes", "No"] },
-    "stage":     { "target": "custom", "ghlField": "contact.lead_stage", "customFieldId": "SiygpuhWwyrbYZOx4pFp", "label": "Lead Stage", "dataType": "SINGLE_OPTIONS", "options": ["video gate", "booking form", "booking page"] },
-    "source":    { "target": "standard", "ghlField": "source", "$comment": "Native contact source attribute, not a custom field. Unique per form — sufficient to parse the payload on its own." }
+    "firstName": {
+      "target": "standard",
+      "ghlField": "firstName"
+    },
+    "lastName": {
+      "target": "standard",
+      "ghlField": "lastName"
+    },
+    "email": {
+      "target": "standard",
+      "ghlField": "email"
+    },
+    "phone": {
+      "target": "standard",
+      "ghlField": "phone",
+      "transform": "e164",
+      "$comment": "Free text on the page. Placeholder format (337) 555-0100."
+    },
+    "city": {
+      "target": "standard",
+      "ghlField": "city"
+    },
+    "state": {
+      "target": "standard",
+      "ghlField": "state",
+      "transform": "normalizeUsState",
+      "$comment": "Free text. Expect TX, Texas, tx, and blanks."
+    },
+    "firm": {
+      "target": "custom",
+      "ghlField": "contact.business_name",
+      "customFieldId": "DaBUZbRuhX9bHqTJIkkH",
+      "label": "Business Name",
+      "preexisting": true
+    },
+    "revenueOver300k": {
+      "target": "custom",
+      "ghlField": "contact.revenue_over_300k",
+      "customFieldId": "DClWdYbE64yE5FphvJjc",
+      "label": "Revenue Over $300k",
+      "dataType": "SINGLE_OPTIONS",
+      "options": [
+        "Yes",
+        "No"
+      ]
+    },
+    "stage": {
+      "target": "custom",
+      "ghlField": "contact.lead_stage",
+      "customFieldId": "SiygpuhWwyrbYZOx4pFp",
+      "label": "Lead Stage",
+      "dataType": "SINGLE_OPTIONS",
+      "options": [
+        "video gate",
+        "booking form",
+        "booking page"
+      ]
+    },
+    "source": {
+      "target": "standard",
+      "ghlField": "source",
+      "$comment": "Native contact source attribute, not a custom field. Unique per form \u2014 sufficient to parse the payload on its own."
+    },
+    "videoPercent": {
+      "target": "none",
+      "$comment": "Engagement signal on the anonymous video_progress payload. No contact to attach it to."
+    }
   },
-
   "payloads": [
     {
-      "id": "video_gate",
+      "id": "video_progress",
       "page": "index.html",
-      "trigger": "Name + email submitted to unlock the VSL video",
-      "discriminator": { "stage": "video gate", "source": "Law Firm VSL - Video Gate" },
-      "fields": {
-        "firstName": { "type": "string", "required": true },
-        "email":     { "type": "string", "required": true, "validation": ".+@.+\\..+" },
-        "stage":     { "type": "string", "const": "video gate" },
-        "source":    { "type": "string", "const": "Law Firm VSL - Video Gate" }
+      "trigger": "Video reaches 25/50/75/95 percent watched",
+      "discriminator": {
+        "stage": "video watched",
+        "source": "Law Firm VSL - Video Watch"
       },
-      "absentFields": ["lastName", "phone", "firm", "city", "state", "revenueOver300k"],
-      "$comment": "PARTIAL LEAD. Create-contact step must not require lastName or phone."
+      "fields": {
+        "stage": {
+          "type": "string",
+          "const": "video watched"
+        },
+        "videoPercent": {
+          "type": "number",
+          "enum": [
+            25,
+            50,
+            75,
+            95
+          ]
+        },
+        "source": {
+          "type": "string",
+          "const": "Law Firm VSL - Video Watch"
+        }
+      },
+      "absentFields": [
+        "firstName",
+        "lastName",
+        "email",
+        "phone",
+        "firm",
+        "city",
+        "state",
+        "revenueOver300k"
+      ],
+      "anonymous": true,
+      "$comment": "ANONYMOUS \u2014 carries no contact identifier at all. Cannot be matched to a contact or upserted. Fires up to 4x per viewer. Use for aggregate engagement only, or ignore in the contact workflow."
     },
     {
       "id": "vsl_booking_form",
       "page": "index.html",
       "trigger": "Step 4 'See Available Times' clicked",
-      "discriminator": { "stage": "booking form", "source": "Law Firm VSL - Booking Form" },
+      "discriminator": {
+        "stage": "booking form",
+        "source": "Law Firm VSL - Booking Form"
+      },
       "fields": {
-        "firstName": { "type": "string", "required": true },
-        "lastName":  { "type": "string", "required": true },
-        "email":     { "type": "string", "required": true },
-        "phone":     { "type": "string", "required": true },
-        "firm":      { "type": "string", "required": true },
-        "city":      { "type": "string", "required": true },
-        "state":     { "type": "string", "required": true },
-        "revenueOver300k": { "type": "string", "enum": ["Yes", "No"], "nullable": true, "$comment": "null when the booker is reached by scrolling to #book, skipping step 1." },
-        "stage":     { "type": "string", "const": "booking form" },
-        "source":    { "type": "string", "const": "Law Firm VSL - Booking Form" }
+        "firstName": {
+          "type": "string",
+          "required": true
+        },
+        "lastName": {
+          "type": "string",
+          "required": true
+        },
+        "email": {
+          "type": "string",
+          "required": true
+        },
+        "phone": {
+          "type": "string",
+          "required": true
+        },
+        "firm": {
+          "type": "string",
+          "required": true
+        },
+        "city": {
+          "type": "string",
+          "required": true
+        },
+        "state": {
+          "type": "string",
+          "required": true
+        },
+        "revenueOver300k": {
+          "type": "string",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "nullable": true,
+          "$comment": "null when the booker is reached by scrolling to #book, skipping step 1."
+        },
+        "stage": {
+          "type": "string",
+          "const": "booking form"
+        },
+        "source": {
+          "type": "string",
+          "const": "Law Firm VSL - Booking Form"
+        }
       }
     },
     {
       "id": "standalone_booking_page",
       "page": "booking.html",
       "trigger": "Step 4 'See Available Times' clicked",
-      "discriminator": { "stage": "booking page", "source": "Booking Page" },
+      "discriminator": {
+        "stage": "booking page",
+        "source": "Booking Page"
+      },
       "fields": {
-        "firstName": { "type": "string", "required": true },
-        "lastName":  { "type": "string", "required": true },
-        "email":     { "type": "string", "required": true },
-        "phone":     { "type": "string", "required": true },
-        "firm":      { "type": "string", "required": true },
-        "city":      { "type": "string", "required": true },
-        "state":     { "type": "string", "required": true },
-        "revenueOver300k": { "type": "string", "enum": ["Yes", "No"], "nullable": true },
-        "stage":     { "type": "string", "const": "booking page" },
-        "source":    { "type": "string", "const": "Booking Page" }
+        "firstName": {
+          "type": "string",
+          "required": true
+        },
+        "lastName": {
+          "type": "string",
+          "required": true
+        },
+        "email": {
+          "type": "string",
+          "required": true
+        },
+        "phone": {
+          "type": "string",
+          "required": true
+        },
+        "firm": {
+          "type": "string",
+          "required": true
+        },
+        "city": {
+          "type": "string",
+          "required": true
+        },
+        "state": {
+          "type": "string",
+          "required": true
+        },
+        "revenueOver300k": {
+          "type": "string",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "nullable": true
+        },
+        "stage": {
+          "type": "string",
+          "const": "booking page"
+        },
+        "source": {
+          "type": "string",
+          "const": "Booking Page"
+        }
       }
     }
   ],
-
   "endpoints": {
     "$comment": "NOT IMPLEMENTED. Both 404 in production today; the pages fall back to demo mode.",
     "implemented": false,
@@ -95,47 +249,128 @@
       "method": "GET",
       "path": "/api/slots",
       "query": {
-        "startDate": { "type": "number", "format": "epoch_ms", "value": "Date.now()" },
-        "endDate":   { "type": "number", "format": "epoch_ms", "value": "now + 17 days" },
-        "timezone":  { "type": "string", "const": "America/Chicago" },
-        "calendarId": { "type": "string", "const": "vi7CsC1AbMZIkfKJ0I1u" }
+        "startDate": {
+          "type": "number",
+          "format": "epoch_ms",
+          "value": "Date.now()"
+        },
+        "endDate": {
+          "type": "number",
+          "format": "epoch_ms",
+          "value": "now + 17 days"
+        },
+        "timezone": {
+          "type": "string",
+          "const": "America/Chicago"
+        },
+        "calendarId": {
+          "type": "string",
+          "const": "vi7CsC1AbMZIkfKJ0I1u"
+        }
       },
       "upstream": "GHL GET /calendars/{calendarId}/free-slots",
-      "responseShape": "{ \"YYYY-MM-DD\": { \"slots\": [\"<iso8601>\"] } }  — a bare array per key is also accepted"
+      "responseShape": "{ \"YYYY-MM-DD\": { \"slots\": [\"<iso8601>\"] } }  \u2014 a bare array per key is also accepted"
     },
     "book": {
       "method": "POST",
       "path": "/api/book",
       "body": {
-        "firstName": { "type": "string" },
-        "lastName":  { "type": "string" },
-        "email":     { "type": "string" },
-        "phone":     { "type": "string" },
-        "startTime": { "type": "string", "format": "iso8601" },
-        "timezone":  { "type": "string", "const": "America/Chicago" },
-        "calendarId": { "type": "string", "const": "vi7CsC1AbMZIkfKJ0I1u" }
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "startTime": {
+          "type": "string",
+          "format": "iso8601"
+        },
+        "timezone": {
+          "type": "string",
+          "const": "America/Chicago"
+        },
+        "calendarId": {
+          "type": "string",
+          "const": "vi7CsC1AbMZIkfKJ0I1u"
+        }
       },
-      "absentFields": ["firm", "city", "state", "revenueOver300k", "stage", "source"],
+      "absentFields": [
+        "firm",
+        "city",
+        "state",
+        "revenueOver300k",
+        "stage",
+        "source"
+      ],
       "upstream": "GHL POST /calendars/events/appointments (upsert contact by email first)",
       "$comment": "Booking data does NOT reach the webhook. Stitch to the contact created at step 4 via email."
     }
   },
-
   "metaPixel": {
     "pixelId": "1276653241236782",
     "events": [
-      { "event": "PageView",         "pages": ["index.html", "booking.html"], "trigger": "page load" },
-      { "event": "ViewContent",      "pages": ["index.html"],                 "trigger": "video gate passed", "params": { "content_name": "VSL Video Gate" } },
-      { "event": "Lead",             "pages": ["index.html", "booking.html"], "trigger": "step 4 submitted, fires alongside the webhook" },
-      { "event": "Schedule",         "pages": ["index.html", "booking.html"], "trigger": "booking confirmed", "reliable": false, "$comment": "Fires on demo bookings today — no real appointment exists." },
-      { "event": "InitiateCheckout", "pages": ["index.html", "booking.html"], "trigger": "'skip the call' clicked", "params": { "value": 497, "currency": "USD" } }
+      {
+        "event": "PageView",
+        "pages": [
+          "index.html",
+          "booking.html"
+        ],
+        "trigger": "page load"
+      },
+      {
+        "event": "ViewContent",
+        "pages": [
+          "index.html"
+        ],
+        "trigger": "video play clicked (no gate)",
+        "params": {
+          "content_name": "VSL Video"
+        }
+      },
+      {
+        "event": "Lead",
+        "pages": [
+          "index.html",
+          "booking.html"
+        ],
+        "trigger": "step 4 submitted, fires alongside the webhook"
+      },
+      {
+        "event": "Schedule",
+        "pages": [
+          "index.html",
+          "booking.html"
+        ],
+        "trigger": "booking confirmed",
+        "reliable": false,
+        "$comment": "Fires on demo bookings today \u2014 no real appointment exists."
+      },
+      {
+        "event": "InitiateCheckout",
+        "pages": [
+          "index.html",
+          "booking.html"
+        ],
+        "trigger": "'skip the call' clicked",
+        "params": {
+          "value": 497,
+          "currency": "USD"
+        }
+      }
     ]
   },
-
   "warnings": [
+    "The video gate was removed \u2014 the VSL video now plays on click with no email capture. There is no longer any 'Law Firm VSL - Video Gate' payload.",
+    "The 11-template 'Law Firm Nurture' sequence (GHL folder 6aa5a080a813792f40c2619b) has NO TRIGGER as of this version. It was fed by the video gate. Re-point it at the booking form or a new capture point before enabling it.",
+    "video_progress fires with no email or name. It cannot create or match a contact.",
     "Booking is in demo mode (demo:true). /api/slots and /api/book both 404. Calendar times are client-side random; Confirm shows a fake confirmation and creates no appointment.",
-    "A VSL viewer who gates the video and then books sends TWO webhooks with the same email. Upsert on email or you will create duplicates.",
-    "revenueOver300k can be absent entirely — the step-1 toggle is skippable.",
+    "revenueOver300k can be absent entirely - the step-1 toggle is skippable.",
     "CFG.checkout points to https://multiplycases.com/checkout, which has no route and currently 404s."
   ]
 }
