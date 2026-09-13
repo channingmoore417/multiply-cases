@@ -1,52 +1,57 @@
-const { ghl, fail, CALENDAR_ID, TIMEZONE, VERSION } = require("./_ghl");
+/**
+ * GET /api/slots?timezone=America/Chicago
+ *   → { "YYYY-MM-DD": { slots: [ISO…] } }
+ *
+ * Thin pass-through over GHL's free-slots endpoint, in the shape the page's
+ * normalise() already expects. GHL applies the calendar's own rules — minimum
+ * notice, booking window, buffer, per-day cap — so this does not re-filter.
+ * Whatever GHL returns is what is bookable.
+ */
+const {
+  ghlFetch, GhlError, isValidTimezone,
+  CALENDAR_ID, DEFAULT_TIMEZONE, BOOKING_DAYS, VERSION,
+} = require("./_ghl");
 
-/* GET /api/slots?startDate=<epochms>&endDate=<epochms>&timezone=&calendarId=
-   Returns GHL's free-slots shape unchanged: { "YYYY-MM-DD": { slots: [iso] } } */
-module.exports = async (req, res) => {
+const DATE_KEY = /^\d{4}-\d{2}-\d{2}$/;
+
+module.exports = async function handler(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
-    return res.status(405).json({ error: "method_not_allowed" });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const q = req.query || {};
-  const now = Date.now();
+  const requested = (req.query && req.query.timezone) || "";
+  const timezone = isValidTimezone(requested) ? requested : DEFAULT_TIMEZONE;
 
-  /* Clamp the window. Never offer a slot in the past, and cap the range so a
-     crafted query cannot ask GHL for a decade of availability. */
-  const startDate = Math.max(Number(q.startDate) || now, now);
-  const maxEnd = startDate + 60 * 86400000;
-  const endDate = Math.min(Number(q.endDate) || startDate + 17 * 86400000, maxEnd);
-
-  if (!Number.isFinite(startDate) || !Number.isFinite(endDate) || endDate <= startDate) {
-    return res.status(400).json({ error: "bad_range" });
-  }
-
-  /* The calendar is ours, not the caller's choice. */
-  const calendarId = CALENDAR_ID;
-  const timezone = typeof q.timezone === "string" && q.timezone ? q.timezone : TIMEZONE;
-
-  const params = new URLSearchParams({
-    startDate: String(startDate),
-    endDate: String(endDate),
-    timezone,
-  });
+  /* The window is ours, not the caller's: never offer a past slot, and never
+     let a crafted query ask GHL for an unbounded range. */
+  const startDate = Date.now();
+  const endDate = startDate + BOOKING_DAYS * 86400000;
 
   try {
-    const data = await ghl(
-      "/calendars/" + calendarId + "/free-slots?" + params.toString(),
-      { version: VERSION.calendars }
-    );
+    const raw = await ghlFetch("/calendars/" + CALENDAR_ID + "/free-slots", {
+      version: VERSION.calendars,
+      query: { startDate, endDate, timezone },
+    });
 
-    /* Strip GHL's traceId so the response is purely date keys. */
+    /* Keep only date keys — GHL also returns bookkeeping like traceId. */
     const out = {};
-    for (const k of Object.keys(data || {})) {
-      if (/^\d{4}-\d{2}-\d{2}$/.test(k)) out[k] = data[k];
+    for (const k of Object.keys(raw || {})) {
+      if (!DATE_KEY.test(k)) continue;
+      const slots = Array.isArray(raw[k] && raw[k].slots) ? raw[k].slots : [];
+      if (slots.length) out[k] = { slots };   // an empty day is noise for the picker
     }
 
-    /* Short cache: availability changes, but not second to second. */
-    res.setHeader("Cache-Control", "public, max-age=60, stale-while-revalidate=120");
+    /* Availability is live. A cached grid books two people into one slot. */
+    res.setHeader("Cache-Control", "no-store");
     return res.status(200).json(out);
-  } catch (e) {
-    return fail(res, e, "Could not load available times.");
+  } catch (err) {
+    const status = err instanceof GhlError ? err.status : 502;
+    console.error("[slots] failed:", err.message, err.detail ? JSON.stringify(err.detail) : "");
+    res.setHeader("Cache-Control", "no-store");
+    /* A bad or missing token is our problem, not an auth challenge to the
+       visitor's browser — never surface it as 401/403. */
+    return res.status(status === 401 || status === 403 || status === 503 ? 500 : status)
+      .json({ error: "Could not load availability" });
   }
 };
