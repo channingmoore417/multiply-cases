@@ -1,6 +1,6 @@
 {
   "$comment": "Contract for the Multiply VSL + booking funnel. Source of truth for auto-building GHL workflows. Generated from index.html and booking.html.",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "location": {
     "name": "Multiply Local",
     "locationId": "rqfDKEvso1ofKq2wgy5d"
@@ -91,6 +91,60 @@
   },
   "payloads": [
     {
+      "id": "contact_captured",
+      "page": "index.html + booking.html",
+      "trigger": "Step 1 submitted \u2014 full name, email, phone",
+      "discriminator": {
+        "stage": "contact captured"
+      },
+      "sourceByPage": {
+        "index.html": "Law Firm VSL - Contact",
+        "booking.html": "Booking Page - Contact"
+      },
+      "fields": {
+        "firstName": {
+          "type": "string",
+          "required": true,
+          "$comment": "Split from one 'Full name' field on the first space."
+        },
+        "lastName": {
+          "type": "string",
+          "$comment": "Everything after the first space. Empty for a single-word name."
+        },
+        "email": {
+          "type": "string",
+          "required": true
+        },
+        "phone": {
+          "type": "string",
+          "required": true,
+          "transform": "e164"
+        },
+        "stage": {
+          "type": "string",
+          "const": "contact captured"
+        },
+        "source": {
+          "type": "string"
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "a",
+            "b"
+          ],
+          "$comment": "index.html only \u2014 the headline A/B test."
+        }
+      },
+      "absentFields": [
+        "firm",
+        "city",
+        "state",
+        "revenueOver300k"
+      ],
+      "$comment": "FIRES FIRST, before any qualifying question. Someone who abandons at the revenue or city step is still captured here. The later qualified payload upserts onto this same contact by email."
+    },
+    {
       "id": "video_progress",
       "page": "index.html",
       "trigger": "Video reaches 25/50/75/95 percent watched",
@@ -133,7 +187,7 @@
     {
       "id": "vsl_booking_form",
       "page": "index.html",
-      "trigger": "Step 4 'See Available Times' clicked",
+      "trigger": "Step 4 submitted \u2014 firm name, after contact was already captured at step 1",
       "discriminator": {
         "stage": "booking form",
         "source": "Law Firm VSL - Booking Form"
@@ -183,13 +237,21 @@
         "source": {
           "type": "string",
           "const": "Law Firm VSL - Booking Form"
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "a",
+            "b"
+          ]
         }
-      }
+      },
+      "$comment": "Enriches the contact created by contact_captured. Same email, so GHL upserts."
     },
     {
       "id": "standalone_booking_page",
       "page": "booking.html",
-      "trigger": "Step 4 'See Available Times' clicked",
+      "trigger": "Step 4 submitted \u2014 firm name, after contact was already captured at step 1",
       "discriminator": {
         "stage": "booking page",
         "source": "Booking Page"
@@ -239,7 +301,8 @@
           "type": "string",
           "const": "Booking Page"
         }
-      }
+      },
+      "$comment": "Enriches the contact created by contact_captured. Same email, so GHL upserts."
     }
   ],
   "endpoints": {
@@ -355,14 +418,6 @@
         }
       },
       {
-        "event": "Lead",
-        "pages": [
-          "index.html",
-          "booking.html"
-        ],
-        "trigger": "step 4 submitted, fires alongside the webhook"
-      },
-      {
         "event": "Schedule",
         "pages": [
           "index.html",
@@ -383,15 +438,43 @@
           "value": 497,
           "currency": "USD"
         }
+      },
+      {
+        "event": "Lead",
+        "pages": [
+          "index.html",
+          "booking.html"
+        ],
+        "trigger": "step 1 contact captured",
+        "params": {
+          "content_name": "Contact Captured"
+        }
+      },
+      {
+        "event": "Qualified",
+        "type": "custom",
+        "pages": [
+          "index.html",
+          "booking.html"
+        ],
+        "trigger": "step 4 submitted, full qualifying data"
       }
     ]
   },
   "warnings": [
+    "The form now captures contact details at step 1 and fires the webhook immediately, so every abandoned form is still a lead. Expect TWO webhooks per completed form, both keyed on the same email.",
     "Booking is live against the GHL calendar. If GHL_API_KEY is unset the endpoints return 503 and the page shows an error rather than fake times - it no longer invents availability or fake confirmations.",
     "The video gate was removed \u2014 the VSL video now plays on click with no email capture. There is no longer any 'Law Firm VSL - Video Gate' payload.",
     "The 11-template 'Law Firm Nurture' sequence (GHL folder 6aa5a080a813792f40c2619b) has NO TRIGGER as of this version. It was fed by the video gate. Re-point it at the booking form or a new capture point before enabling it.",
     "video_progress fires with no email or name. It cannot create or match a contact.",
     "revenueOver300k can be absent entirely - the step-1 toggle is skippable.",
     "CFG.checkout points to https://multiplycases.com/checkout, which has no route and currently 404s."
+  ],
+  "formOrder": [
+    "1 full name + email + phone (captures)",
+    "2 revenue over $300k",
+    "3 city + state",
+    "4 firm name (qualifies)",
+    "5 pick a time"
   ]
 }

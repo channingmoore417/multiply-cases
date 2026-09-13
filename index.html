@@ -260,6 +260,21 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
       </div>
 
       <div class="bpane on" id="pane1">
+        <h3>Who Are We Talking To?</h3>
+        <p class="lead">So we can look at your market before we talk.</p>
+        <div class="fields">
+          <div class="field full"><label for="f-name">Full name</label><input id="f-name" type="text" autocomplete="name" placeholder="Jane Doe"></div>
+          <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" autocomplete="email" placeholder="you@firm.com"></div>
+          <div class="field"><label for="f-phone">Phone</label><input id="f-phone" type="tel" autocomplete="tel" placeholder="(337) 555-0100"></div>
+        </div>
+        <div class="actions">
+          <button class="btn" id="capture" style="width:100%">Continue</button>
+          <div class="err" id="err1"></div>
+          <p class="consent">By continuing you agree to receive calls, texts and emails from Multiply about your firm. Message and data rates may apply. Reply STOP to opt out, HELP for help.</p>
+        </div>
+      </div>
+
+      <div class="bpane" id="pane2">
         <h3>Is Your Firm Doing Over $300,000 A Year?</h3>
         <p class="lead">We only work with firms that can take on more cases.</p>
         <div class="actions">
@@ -267,10 +282,11 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
             <button type="button" data-val="Yes">Yes</button>
             <button type="button" data-val="No">Not yet</button>
           </div>
+          <button class="back" data-back="1">Back</button>
         </div>
       </div>
 
-      <div class="bpane" id="pane2">
+      <div class="bpane" id="pane3">
         <h3>What City Is Your Firm In?</h3>
         <p class="lead">So we can look at your market before we talk.</p>
         <div class="fields">
@@ -278,38 +294,21 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
           <div class="field"><label for="f-st">State</label><input id="f-st" type="text" autocomplete="address-level1" placeholder="TX"></div>
         </div>
         <div class="actions">
-          <button class="btn" data-next="3" style="width:100%">Continue</button>
-          <div class="err" id="err2"></div>
-          <button class="back" data-back="1">Back</button>
-        </div>
-      </div>
-
-      <div class="bpane" id="pane3">
-        <h3>What Is The Firm Called?</h3>
-        <p class="lead">So we can look at your site and profile before we talk.</p>
-        <div class="fields">
-          <div class="field full"><label for="f-firm">Law firm name</label><input id="f-firm" type="text" autocomplete="organization" placeholder="Doe Law Firm"></div>
-        </div>
-        <div class="actions">
-          <button class="btn" data-next="4" style="width:100%">Next</button>
+          <button class="btn" data-next="4" style="width:100%">Continue</button>
           <div class="err" id="err3"></div>
           <button class="back" data-back="2">Back</button>
         </div>
       </div>
 
       <div class="bpane" id="pane4">
-        <h3>Who Are We Talking To?</h3>
-        <p class="lead">Last step before the calendar.</p>
+        <h3>What Is The Firm Called?</h3>
+        <p class="lead">So we can look at your site and profile before we talk.</p>
         <div class="fields">
-          <div class="field"><label for="f-first">First name</label><input id="f-first" type="text" autocomplete="given-name" placeholder="Jane"></div>
-          <div class="field"><label for="f-last">Last name</label><input id="f-last" type="text" autocomplete="family-name" placeholder="Doe"></div>
-          <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" autocomplete="email" placeholder="you@firm.com"></div>
-          <div class="field"><label for="f-phone">Phone</label><input id="f-phone" type="tel" autocomplete="tel" placeholder="(337) 555-0100"></div>
+          <div class="field full"><label for="f-firm">Law firm name</label><input id="f-firm" type="text" autocomplete="organization" placeholder="Doe Law Firm"></div>
         </div>
         <div class="actions">
           <button class="btn" id="to-times" style="width:100%">See Available Times</button>
           <div class="err" id="err4"></div>
-          <p class="consent">By continuing you agree to receive calls, texts and emails from Multiply about your firm. Message and data rates may apply. Reply STOP to opt out, HELP for help.</p>
           <button class="back" data-back="3">Back</button>
         </div>
       </div>
@@ -549,28 +548,61 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
   })();
 
   /* step 1 — one tap, auto advance */
+  /* Split "Jane Doe" into the first/last GHL expects. Everything after the
+     first space is the surname, so "Mary Anne Doe" keeps "Anne Doe" together
+     rather than silently dropping a name part. */
+  function splitName(full){
+    var parts = String(full || "").trim().split(/\s+/);
+    return { first: parts.shift() || "", last: parts.join(" ") };
+  }
+
+  /* Step 1 captures the contact and sends it immediately. Someone who quits at
+     the revenue or city question is still a lead we can call. */
+  $("capture").addEventListener("click", function(){
+    var name  = $("f-name").value.trim(),
+        email = $("f-email").value.trim(),
+        phone = $("f-phone").value.trim();
+
+    if(!name || !email || !phone){
+      $("err1").textContent = "Name, email and phone to get started."; return;
+    }
+    if(!/.+@.+\..+/.test(email)){
+      $("err1").textContent = "That email does not look right."; return;
+    }
+    $("err1").textContent = "";
+
+    var n = splitName(name);
+    state.firstName = n.first; state.lastName = n.last;
+    state.email = email; state.phone = phone;
+
+    hook({
+      firstName:n.first, lastName:n.last, email:email, phone:phone,
+      stage:"contact captured", source:"Law Firm VSL - Contact",
+      variant:(window.__AB || "a"),
+    });
+
+    /* The lead exists at this point, so this is where Lead belongs. */
+    fbTrack("Lead", {content_name:"Contact Captured"});
+    vaTrack("lead", {source:"vsl"});
+
+    show(2);
+  });
+
   Array.prototype.forEach.call($("f-rev").querySelectorAll("button"), function(b){
     b.addEventListener("click", function(){
       Array.prototype.forEach.call($("f-rev").querySelectorAll("button"), function(x){ x.classList.remove("on"); });
       b.classList.add("on");
       state.revenue = b.dataset.val;
-      setTimeout(function(){ show(2); $("f-city").focus(); }, 180);
+      setTimeout(function(){ show(3); $("f-city").focus(); }, 180);
     });
   });
 
-  /* steps 2 and 3 — simple forward moves */
   Array.prototype.forEach.call(document.querySelectorAll("[data-next]"), function(b){
     b.addEventListener("click", function(){
       var n = parseInt(b.dataset.next, 10);
-      if(n === 3){
-        if(!$("f-city").value.trim() || !$("f-st").value.trim()){
-          $("err2").textContent = "City and state, then we can check availability."; return;
-        }
-        $("err2").textContent = "";
-      }
       if(n === 4){
-        if(!$("f-firm").value.trim()){
-          $("err3").textContent = "The firm name, please."; return;
+        if(!$("f-city").value.trim() || !$("f-st").value.trim()){
+          $("err3").textContent = "City and state, then we can check availability."; return;
         }
         $("err3").textContent = "";
       }
@@ -578,34 +610,27 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
     });
   });
 
-  Array.prototype.forEach.call(document.querySelectorAll("[data-back]"), function(b){
-    b.addEventListener("click", function(){ show(parseInt(b.dataset.back, 10)); });
-  });
-
-  /* step 4 — everything lands in the CRM here */
+  /* Step 4 sends the qualified payload. Same email, so GHL upserts onto the
+     contact created at step 1 rather than making a second record. */
   $("to-times").addEventListener("click", function(){
-    var first = $("f-first").value.trim(), last = $("f-last").value.trim(),
-        email = $("f-email").value.trim(), phone = $("f-phone").value.trim();
-    if(!first || !last || !email || !phone){
-      $("err4").textContent = "Name, email and phone, then you are through."; return;
+    if(!$("f-firm").value.trim()){
+      $("err4").textContent = "The firm name, please."; return;
     }
     $("err4").textContent = "";
+
     var btn = $("to-times");
     btn.disabled = true; btn.textContent = "One moment";
 
-    state.email = email; state.phone = phone;
-    state.firstName = first; state.lastName = last;
-
     hook({
-      firstName:first, lastName:last, email:email, phone:phone,
+      firstName:state.firstName, lastName:state.lastName,
+      email:state.email, phone:state.phone,
       firm:$("f-firm").value.trim(), city:$("f-city").value.trim(),
       state:$("f-st").value.trim(), revenueOver300k:state.revenue,
       stage:"booking form", source:"Law Firm VSL - Booking Form",
-      variant:(window.__AB || "a")
+      variant:(window.__AB || "a"),
     });
 
-    fbTrack("Lead", {content_name:"Booking Form"});
-    vaTrack("lead", {source:"vsl"});
+    fbCustom("Qualified", {content_name:"Booking Form"});
 
     setTimeout(function(){
       btn.disabled = false; btn.textContent = "See Available Times";
