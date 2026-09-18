@@ -16,6 +16,7 @@ resolves when served rather than opened over `file://`.
   current website, zip, firm name, name/phone, email)
 - Zip lookup via zippopotam.us, with a manual city/state fallback
 - Lead posts to the GHL inbound webhook on the final step
+- Proof section showing three recent builds
 - "What you get", small-markets explainer, founder section and footer
 
 ### `booking.html` — standalone "Book A Call" page
