@@ -4,7 +4,9 @@ Landing pages for Multiply — law firm marketing.
 
 Both pages are self-contained static HTML: all CSS, JavaScript, and images
 (inline base64) are embedded, with Google Fonts loaded from a CDN. They can be
-served by any static host or opened directly in a browser.
+served by any static host or opened directly in a browser. The one sibling
+asset is `favicon.png`, referenced from the site root, so the tab icon only
+resolves when served rather than opened over `file://`.
 
 ## Pages
 
