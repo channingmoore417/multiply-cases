@@ -181,6 +181,7 @@ h1 .strike::after{
 /* ---------- capture card ---------- */
 .card{
   background:var(--white);
+  color:var(--ink);
   border:3px solid var(--black);
   box-shadow:10px 10px 0 var(--red);
   padding:1.5rem 1.25rem 1.75rem;
@@ -334,6 +335,23 @@ input:focus{outline:3px solid var(--red);outline-offset:2px;}
   line-height:1;
   margin:0 0 .75rem;
   text-transform:uppercase;
+  color:var(--black);
+}
+.done p{
+  margin:0 0 .75rem;
+  color:var(--ink);
+}
+.done p:last-child{margin-bottom:0;}
+.done .done-text{
+  border-left:3px solid var(--red);
+  padding-left:.85rem;
+  color:var(--muted);
+}
+.done .done-text strong{color:var(--ink);}
+.biz-line{
+  color:var(--red);
+  font-weight:700;
+  white-space:nowrap;
 }
 
 /* ---------- benefits ---------- */
@@ -551,7 +569,7 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
   <div class="wrap hero-grid">
     <div>
       <span class="kicker">For small market law firms only</span>
-      <h1>The $197 a month law firm website built to <span class="strike">outrank</span> the $2,000 a month one</h1>
+      <h1>The $197 a month law firm website built to outrank the <span class="strike">$2,000</span> a month one</h1>
       <p class="sub">Every day you wait, the lawyer mill down the street takes a case that should have been yours. Fill out your info below to claim your <strong>$197/m website</strong> and we'll show you how to be the first law firm people see on Google and ChatGPT.</p>
 
       <div class="start" aria-hidden="true">
@@ -669,8 +687,9 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
       <!-- done -->
       <section class="step done" data-step="8">
         <div class="tick">&#10003;</div>
-        <h2>You're in</h2>
-        <p>We got your info and we're already looking at how your firm shows up in your market. Keep an eye on your phone, we reach out fast.</p>
+        <h2>Got it</h2>
+        <p>Your info came through on our end, and we're already looking at how your firm shows up in your market.</p>
+        <p class="done-text"><strong>We'll text you shortly from <a class="biz-line" href="tel:13375702028">(337) 570-2028</a></strong> &mdash; that's our business line. Save it so you know it's us when it comes through.</p>
       </section>
     </div>
   </div>
