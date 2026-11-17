@@ -2,7 +2,7 @@
 
 Landing pages for Multiply — law firm marketing.
 
-Both pages are self-contained static HTML: all CSS, JavaScript, and images
+The pages are self-contained static HTML: all CSS, JavaScript, and images
 (inline base64) are embedded, with Google Fonts loaded from a CDN. They can be
 served by any static host or opened directly in a browser. The one sibling
 asset is `favicon.png`, referenced from the site root, so the tab icon only
@@ -22,6 +22,14 @@ resolves when served rather than opened over `file://`.
 ### `booking.html` — standalone "Book A Call" page
 
 Booking flow against the GHL calendar via `/api/slots` and `/api/book`.
+
+### `call.html` — workshop call booking page
+
+The page pushed at the end of the local business workshop. Embeds the GHL
+calendar "Multiply Your Business Call" directly, so availability and booking
+are live with no backend or API token. Prefills the calendar form from
+`?first_name=&last_name=&email=&phone=` or from the `ml-lead` record the
+workshop registration form saves in sessionStorage.
 
 ## Tracking
 
