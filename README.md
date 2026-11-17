@@ -25,11 +25,20 @@ Booking flow against the GHL calendar via `/api/slots` and `/api/book`.
 
 ### `call.html` — workshop call booking page
 
-The page pushed at the end of the local business workshop. Embeds the GHL
-calendar "Multiply Your Business Call" directly, so availability and booking
-are live with no backend or API token. Prefills the calendar form from
-`?first_name=&last_name=&email=&phone=` or from the `ml-lead` record the
-workshop registration form saves in sessionStorage.
+The page pushed at the end of the local business workshop.
+
+1. A ten-question application (Google Business Profile, lead sources,
+   biggest challenge, revenue, budget, timeline, owner on call, will show up,
+   services and area, contact details). Answers post to the GHL inbound
+   webhook behind the Strategy Call Request form on multiplylocal.com/book.
+2. A calendar for "Multiply Your Business Call", drawn from `/api/slots`
+   and booked through `/api/book`. Those need `GHL_PRIVATE_TOKEN` set in
+   the host's environment. Without it the page falls back to GHL's own
+   embedded widget for the same calendar, so a real slot can always be booked.
+
+Contact fields prefill from `?first_name=&last_name=&email=&phone=` or
+from the `ml-lead` record the workshop registration form saves in
+sessionStorage.
 
 ## Tracking
 

@@ -54,6 +54,79 @@ h2{font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.14;margin:0 0 26px}
 .host p{max-width:640px}
 .btn{display:inline-block;background:var(--red);color:#fff;border:0;padding:15px 32px;font-size:1.3rem;letter-spacing:.02em;cursor:pointer;text-decoration:none;text-align:center;transition:background .15s}
 .btn:hover{background:var(--red-dark)}
+[hidden]{display:none!important}
+button,input,textarea{font-family:inherit}
+.view-form{padding:26px 24px 32px}
+.quiz{max-width:760px;margin:0 auto}
+.qbar{height:6px;background:#eee}
+.qfill{height:100%;width:0;background:var(--red);transition:width .3s ease}
+.qmeta{display:flex;justify-content:space-between;align-items:center;margin:14px 0 22px;font-size:.8125rem;font-weight:700;color:var(--muted)}
+.linkbtn{background:none;border:0;border-bottom:1px solid currentColor;color:var(--red);font:inherit;font-weight:700;cursor:pointer;padding:0}
+.linkbtn:disabled{visibility:hidden}
+.qs{animation:qin .25s ease;border:0;padding:0;margin:0}
+@keyframes qin{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+.qt{font-family:'Oswald',Impact,sans-serif;text-transform:uppercase;font-weight:700;font-size:clamp(1.55rem,3.2vw,2.2rem);line-height:1.15;margin:0 0 6px;padding:0}
+.qh{color:var(--muted);margin:0 0 4px;font-size:.9375rem}
+.opts{display:grid;gap:10px;margin-top:18px}
+.opts.two{grid-template-columns:1fr 1fr}
+.opt{display:flex;align-items:flex-start;gap:12px;border:1px solid #bfb6ad;background:#fff;padding:17px 18px;cursor:pointer;line-height:1.45;font-size:1.0625rem;font-weight:600;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--red)}
+.opt:has(input:checked){border-color:var(--red);background:var(--tint)}
+.opt input{margin:3px 0 0;width:18px;height:18px;accent-color:var(--red);flex:none}
+.disq{margin-top:14px;padding:12px 16px;background:#fdecea;border-left:5px solid var(--red);font-size:.9375rem;font-weight:600}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;margin-top:4px}
+.fgrid>div{display:flex;flex-direction:column;justify-content:flex-end}
+.fgrid .full{grid-column:1/-1}
+.f label:not(.opt){display:block;font-weight:700;font-size:.9375rem;margin:18px 0 6px}
+.f input:not([type=radio]),.f textarea{display:block;width:100%;min-height:48px;border:1px solid #bfb6ad;border-radius:0;background:#fff;color:var(--ink);padding:0 14px;font:inherit;font-size:1rem}
+.f textarea{padding:12px 14px;min-height:104px;resize:vertical}
+.f input:not([type=radio]):focus,.f textarea:focus{outline:2px solid var(--red);outline-offset:1px;border-color:var(--red)}
+.req{color:var(--red);margin-left:3px}
+.optl{color:var(--muted);font-weight:500;margin-left:6px}
+.btn.qnext{min-width:200px;margin-top:24px}
+.status{min-height:1.3rem;margin-top:12px;font-size:.9375rem;color:var(--red)}
+.consent{font-size:.78rem;color:var(--muted);line-height:1.45;margin-top:12px}
+.chosen{background:var(--tint);border-left:5px solid var(--red);padding:14px 18px;margin:8px 8px 0}
+.chosen small{display:block;color:var(--muted);font-size:.8125rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.chosen b{font-family:'Oswald',Impact,sans-serif;text-transform:uppercase;font-size:1.35rem;font-weight:600;line-height:1.3}
+@media(max-width:620px){.opts.two{grid-template-columns:1fr}.btn.qnext{display:block;width:100%}.view-form{padding:20px 18px}.fgrid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.qs{animation:none}}
+
+.pane-pick{padding:22px 24px 28px;display:grid;grid-template-columns:1fr 280px;gap:34px;align-content:start}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-month{font-family:'Oswald',Impact,sans-serif;text-transform:uppercase;font-size:1.25rem;font-weight:600}
+.cal-nav{display:flex;gap:6px}
+.cal-nav button{width:36px;height:36px;border:1px solid #bfb6ad;background:#fff;color:var(--ink);font-size:1.15rem;line-height:1;cursor:pointer}
+.cal-nav button:hover:not(:disabled){border-color:var(--red);color:var(--red)}
+.cal-nav button:disabled{color:#ccc;border-color:#e6e2dd;cursor:default}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-dow{font-size:.75rem;font-weight:700;color:var(--muted);text-align:center;padding:2px 0 8px;text-transform:uppercase;letter-spacing:.04em}
+.cal-day{aspect-ratio:1/1;min-height:42px;border:1px solid transparent;border-radius:0;background:transparent;color:#c4beb7;font-size:.9375rem;font-weight:700;cursor:default}
+.cal-day.open{background:var(--tint);border-color:#f1cdc7;color:var(--red);cursor:pointer;transition:background .15s}
+.cal-day.open:hover{background:#fbe3df}
+.cal-day.sel,.cal-day.sel:hover{background:var(--red);border-color:var(--red);color:#fff}
+.cal-day.today:not(.sel){box-shadow:inset 0 -3px 0 #bfb6ad}
+.cal-day.blank{visibility:hidden}
+.cal-tz{margin-top:16px;color:var(--muted);font-size:.8125rem}
+.times-head{font-weight:800;margin-bottom:12px;min-height:1.6rem}
+.times{display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;padding-right:2px}
+.time-row{display:flex;gap:8px}
+.time{flex:1;min-height:46px;border:1.5px solid var(--red);border-radius:0;background:#fff;color:var(--red);font-size:.9375rem;font-weight:800;cursor:pointer;transition:background .15s}
+.time:hover{background:var(--tint)}
+.time.sel{background:var(--tint);border-width:2px;flex:1 1 50%;cursor:default}
+.btn.go{width:auto;white-space:nowrap;padding:0 14px;font-size:1.05rem;min-height:46px}
+.btn:disabled{opacity:.6;cursor:default}
+.skel{background:var(--cream);border:1px solid var(--line);min-height:46px;animation:skel 1.2s ease-in-out infinite}
+@keyframes skel{50%{opacity:.5}}
+.sched-msg{grid-column:1/-1;min-height:1.3rem;font-size:.9375rem;color:var(--red)}
+.booked{text-align:center;padding:56px 18px}
+.booked-mark{width:56px;height:56px;background:#267047;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:800;margin-bottom:16px}
+.booked h3{font-size:2rem}
+.booked p{color:var(--muted);margin-top:8px;font-size:1.0625rem}
+.booked p b{color:var(--ink)}
+@media(max-width:940px){.pane-pick{grid-template-columns:1fr}}
+@media(max-width:620px){.pane-pick{padding:18px}.times{max-height:none}.cal-day{min-height:38px}}
+@media(prefers-reduced-motion:reduce){.skel{animation:none}}
 a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset:2px}
 footer{padding:30px 22px;text-align:center;color:var(--muted);font-size:.8rem;border-top:1px solid #eee}
 footer p{max-width:820px;margin:0 auto 10px}
@@ -88,19 +161,122 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
 <section class="hero"><div class="wrap">
  <div class="eyebrow">You&rsquo;ve seen the Multiply Method</div>
  <h1>Now Let&rsquo;s Map It To <span class="red">Your Business<span id="h-name"></span>.</span></h1>
- <p class="sub">Book a free 30-minute call. We&rsquo;ll walk you through a custom plan built for your business: your market, your competitors, and your biggest opportunities to get found and turn searches into leads and clients.</p>
+ <p class="sub">Answer a few quick questions, then pick a time for your free 30-minute call. We&rsquo;ll walk you through a custom plan built for your business: your market, your competitors, and your biggest opportunities to get found and turn searches into leads and clients.</p>
  <ul class="facts"><li>Free, no obligation</li><li>30 minutes</li><li>A plan built for your market</li></ul>
 </div></section>
 
 <section class="booksec" id="book" aria-labelledby="book-title"><div class="wrap narrow">
  <div class="book">
-  <div class="book-top"><b id="book-title">Multiply Your Business Call</b><span>Pick a day and time</span></div>
-  <div class="book-body">
-   <p class="loading" id="loading">Loading open times&hellip;</p>
-   <iframe id="cal" title="Pick a time for your Multiply call" scrolling="no"></iframe>
+  <div class="book-top"><b id="book-title">Multiply Your Business Call</b><span id="book-step">Step 1 of 2 &middot; A few quick questions</span></div>
+
+  <div class="view-form" id="view-form">
+   <div class="quiz">
+    <div class="qbar" aria-hidden="true"><div class="qfill" id="qfill"></div></div>
+    <div class="qmeta"><button type="button" class="linkbtn" id="q-back">&larr; Back</button><span id="q-count" aria-live="polite"></span></div>
+    <form id="call-form" class="f" aria-label="Application questions" novalidate>
+     <fieldset class="qs"><legend class="qt">Do You Have A Google Business Profile For Your Business Already?</legend>
+      <div class="opts">
+      <label class="opt"><input type="radio" name="gbp" value="Yes- it's active" required><span>Yes- it&rsquo;s active</span></label>
+      <label class="opt"><input type="radio" name="gbp" value="Yes- but it's inactive (not ranking, no clients)"><span>Yes- but it&rsquo;s inactive (not ranking, no clients)</span></label>
+      <label class="opt"><input type="radio" name="gbp" value="Not yet!"><span>Not yet!</span></label>
+      </div></fieldset>
+
+     <fieldset class="qs" hidden><legend class="qt">Where Do Most Of Your Customers Come From Right Now?</legend>
+      <div class="opts">
+      <label class="opt"><input type="radio" name="lead_source" value="Referrals and word of mouth" required><span>Referrals and word of mouth</span></label>
+      <label class="opt"><input type="radio" name="lead_source" value="Google search or Google Maps"><span>Google search or Google Maps</span></label>
+      <label class="opt"><input type="radio" name="lead_source" value="Social media"><span>Social media</span></label>
+      <label class="opt"><input type="radio" name="lead_source" value="Paid ads"><span>Paid ads</span></label>
+      <label class="opt"><input type="radio" name="lead_source" value="Not sure"><span>Honestly, I&rsquo;m not sure</span></label>
+      </div></fieldset>
+
+     <fieldset class="qs" hidden><legend class="qt">What Is Your Biggest Challenge Right Now?</legend>
+      <p class="qh">Pick the one that hits closest to home.</p>
+      <div class="opts">
+      <label class="opt"><input type="radio" name="biggest_challenge" value="I'm not showing up on Google" required><span>I&rsquo;m not showing up on Google</span></label>
+      <label class="opt"><input type="radio" name="biggest_challenge" value="My website isn't bringing in customers"><span>My website isn&rsquo;t bringing in customers</span></label>
+      <label class="opt"><input type="radio" name="biggest_challenge" value="I'm losing leads I never follow up with"><span>I&rsquo;m losing leads I never follow up with</span></label>
+      <label class="opt"><input type="radio" name="biggest_challenge" value="I don't have enough Google reviews"><span>I don&rsquo;t have enough Google reviews</span></label>
+      <label class="opt"><input type="radio" name="biggest_challenge" value="All of the above"><span>All of the above. I need the full system</span></label>
+      </div></fieldset>
+
+     <fieldset class="qs" hidden><legend class="qt">What Is Your Current Monthly Revenue?</legend>
+      <div class="opts two">
+      <label class="opt"><input type="radio" name="revenue" value="I'm just getting started (no sales)" required><span>I&rsquo;m just getting started (no sales)</span></label>
+      <label class="opt"><input type="radio" name="revenue" value="$1k - $5K/ month"><span>$1k - $5K/ month</span></label>
+      <label class="opt"><input type="radio" name="revenue" value="$5k - $10K/ month"><span>$5k - $10K/ month</span></label>
+      <label class="opt"><input type="radio" name="revenue" value="$10K - $20K/ month"><span>$10K - $20K/ month</span></label>
+      <label class="opt"><input type="radio" name="revenue" value="$20k - $50K/ month"><span>$20k - $50K/ month</span></label>
+      <label class="opt"><input type="radio" name="revenue" value="$50k+ per month"><span>$50k+ per month</span></label>
+      </div></fieldset>
+
+     <!-- Budget tiers mirror the workshop thank-you page: change both together. -->
+     <fieldset class="qs" hidden><legend class="qt">How Much AVAILABLE Marketing Budget Do You Have?</legend>
+      <div class="opts">
+      <label class="opt"><input type="radio" name="budget" value="Under $500 / month" required><span>Under $500 / month</span></label>
+      <label class="opt"><input type="radio" name="budget" value="$500 - $1,000 / month"><span>$500 - $1,000 / month</span></label>
+      <label class="opt"><input type="radio" name="budget" value="$1,000 - $2,500 / month"><span>$1,000 - $2,500 / month</span></label>
+      <label class="opt"><input type="radio" name="budget" value="$2,500+ / month"><span>$2,500+ / month</span></label>
+      </div></fieldset>
+
+     <fieldset class="qs" hidden><legend class="qt">How Soon Do You Want To Start Getting More Leads?</legend>
+      <div class="opts">
+      <label class="opt"><input type="radio" name="timeline" value="As soon as possible" required><span>As soon as possible</span></label>
+      <label class="opt"><input type="radio" name="timeline" value="1-2 weeks"><span>1-2 weeks</span></label>
+      <label class="opt"><input type="radio" name="timeline" value="Flexible"><span>Flexible</span></label>
+      </div></fieldset>
+
+     <fieldset class="qs" hidden data-qual="owner"><legend class="qt">Will The Business Owner Be Present On The Call?</legend>
+      <div class="opts">
+      <label class="opt"><input type="radio" name="owner_on_call" value="Yes" required><span>Yes - The owner will be on the call</span></label>
+      <label class="opt"><input type="radio" name="owner_on_call" value="No"><span>No - Selecting this cancels your application</span></label>
+      </div>
+      <p class="disq" hidden>The business owner needs to be on the call. Selecting No cancels your application. Choose Yes to continue.</p></fieldset>
+
+     <fieldset class="qs" hidden data-qual="show"><legend class="qt">Will You 100% Show Up To Your Call?</legend>
+      <p class="qh">You pick the time on the next screen. Only book one you can make.</p>
+      <div class="opts">
+      <label class="opt"><input type="radio" name="will_show" value="Yes" required><span>Yes - I will 100% show up at the time I pick</span></label>
+      <label class="opt"><input type="radio" name="will_show" value="No"><span>No - Selecting this cancels your application</span></label>
+      </div>
+      <p class="disq" hidden>We hold this time just for you. Selecting No cancels your application. Choose Yes to continue.</p></fieldset>
+
+     <fieldset class="qs" hidden><legend class="qt">Tell Us About Your Business</legend>
+      <div><label for="f-services">What services or products do you offer?<b class="req">*</b></label><textarea id="f-services" name="services" required></textarea></div>
+      <div><label for="f-location">What city and state do you serve?<b class="req">*</b></label><input id="f-location" name="location" autocomplete="address-level2" placeholder="Lake Charles, LA" required></div>
+      <button type="button" class="btn qnext">Next &rarr;</button></fieldset>
+
+     <fieldset class="qs" hidden><legend class="qt">Last Step: Your Contact Details</legend>
+      <div class="fgrid"><div><label for="f-first">First name<b class="req">*</b></label><input id="f-first" name="first_name" autocomplete="given-name" required></div><div><label for="f-last">Last name<b class="req">*</b></label><input id="f-last" name="last_name" autocomplete="family-name" required></div><div><label for="f-email">Email<b class="req">*</b></label><input id="f-email" name="email" type="email" autocomplete="email" required></div><div><label for="f-phone">Phone<b class="req">*</b></label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required></div><div><label for="f-business">Business name<b class="req">*</b></label><input id="f-business" name="business_name" autocomplete="organization" required></div><div><label for="f-website">Website<span class="optl">if you have one</span></label><input id="f-website" name="website" type="text" inputmode="url" autocomplete="url" placeholder="https://..."></div></div>
+      <button type="submit" class="btn qnext" id="submit-btn">See Available Times &rarr;</button>
+      <p class="consent">By continuing you agree to receive calls, texts and emails from Multiply Local about your business. Message and data rates may apply. Reply STOP to opt out, HELP for help.</p></fieldset>
+     <p id="form-status" class="status" role="status" aria-live="polite"></p>
+    </form>
+   </div>
   </div>
+
+  <div id="view-cal" hidden>
+   <div class="chosen"><small>You&rsquo;re approved<span id="c-name"></span></small><b>Now pick your day and time</b></div>
+   <div class="pane-pick" id="native">
+    <div class="cal">
+     <div class="cal-head"><div class="cal-month" id="cal-month"></div><div class="cal-nav"><button type="button" id="cal-prev" aria-label="Previous month">&lsaquo;</button><button type="button" id="cal-next" aria-label="Next month">&rsaquo;</button></div></div>
+     <div class="cal-grid" id="cal-grid" role="group" aria-label="Choose a day"></div>
+     <div class="cal-tz" id="cal-tz"></div>
+    </div>
+    <div class="times-col">
+     <div class="times-head" id="times-head">Loading open times&hellip;</div>
+     <div class="times" id="times" role="group" aria-label="Choose a time"></div>
+    </div>
+    <p class="sched-msg" id="sched-msg" role="status" aria-live="polite"></p>
+   </div>
+   <div class="book-body" id="widget" hidden>
+    <p class="loading" id="loading">Loading open times&hellip;</p>
+    <iframe id="cal" title="Pick a time for your Multiply call" scrolling="no"></iframe>
+   </div>
+  </div>
+  <div class="booked" id="booked" hidden><div class="booked-mark" aria-hidden="true">&#10003;</div><h3>You&rsquo;re Booked</h3><p id="booked-when"></p><p>Check your email for the confirmation. The business owner needs to be on the call.</p></div>
  </div>
- <p class="fine">Times show in your own time zone. Calendar not loading? <a id="direct" href="https://api.leadconnectorhq.com/widget/booking/vi7CsC1AbMZIkfKJ0I1u" target="_blank" rel="noopener">Open it in a new tab</a>.</p>
+ <p class="fine" id="fine">Takes about a minute. Your answers help us prepare your plan before the call.</p>
 </div></section>
 
 <section class="section warm" aria-labelledby="steps-title"><div class="wrap">
@@ -117,9 +293,9 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
  <div>
   <div class="kicker">Your call is with Multiply Local</div>
   <h2 id="host-title">Your Next Customer Is Already Searching.</h2>
-  <p>Bring your questions from the workshop. The business owner needs to be on the call, so pick a time you can make.</p>
+  <p>Bring your questions from the workshop. The business owner needs to be on the call, so pick a time you can make. Answer the questions above and the calendar opens.</p>
  </div>
- <a class="btn" href="#book">Pick My Time &rarr;</a>
+ <a class="btn" href="#book">Book My Call &rarr;</a>
 </div></section>
 </main>
 <footer>
@@ -129,22 +305,27 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
 
 <script>
 (function(){
-  /* Real availability and booking come from the GHL calendar
-     "Multiply Your Business Call" (Multiply Local location). The widget
-     creates the contact and the appointment and sends the confirmations,
-     so this page needs no backend and no API token.
+  /* Step 1: the questionnaire. Answers post to the GHL inbound webhook
+     behind the "Strategy Call Request" form on multiplylocal.com/book, using
+     that form's field names plus the extra questions asked here.
+     Step 2: pick a real time on the GHL calendar "Multiply Your Business
+     Call" (details at the Step 2 block below).
 
-     Prefill: the widget reads first_name, last_name, email and phone from
-     its URL. They come from this page's own query string
-     (/call?first_name=Jane&email=jane@biz.com, or the older fn/ln/em/ph),
-     or from the "ml-lead" record the workshop registration form saves in
+     Prefill: first_name, last_name, email, phone, business_name and website
+     come from this page's query string (or the older fn/ln/em/ph), or from
+     the "ml-lead" record the workshop registration form saves in
      sessionStorage when this page is served from the same site. */
+  var WEBHOOK_URL = "https://services.leadconnectorhq.com/hooks/rqfDKEvso1ofKq2wgy5d/webhook-trigger/82a0e45e-f184-44c4-be5f-d6952bafd168";
   var CALENDAR_ID = "vi7CsC1AbMZIkfKJ0I1u";
   var WIDGET = "https://api.leadconnectorhq.com/widget/booking/" + CALENDAR_ID;
-  var PASS = ["utm_source","utm_medium","utm_campaign","utm_content","utm_term","fbclid","gclid"];
+  var TRACK_KEYS = ["fbclid","utm_source","utm_medium","utm_campaign","utm_content","utm_term","gclid"];
+  var DONE_KEY = "ml-call-applied";
 
+  var $ = function(id){ return document.getElementById(id); };
+  var form = $("call-form"), steps = [].slice.call(form.querySelectorAll(".qs")), qi = 0;
   var q = new URLSearchParams(location.search), saved = {};
   try{ saved = JSON.parse(sessionStorage.getItem("ml-lead") || "{}") || {}; }catch(e){}
+
   function pick(){
     for(var i = 0; i < arguments.length; i++){
       var v = q.get(arguments[i]) || saved[arguments[i]];
@@ -152,38 +333,249 @@ src="https://www.facebook.com/tr?id=1276653241236782&ev=PageView&noscript=1"
     }
     return "";
   }
+  function cap(s){ s = String(s).slice(0, 30); return s.charAt(0).toUpperCase() + s.slice(1); }
 
-  var first = pick("first_name","fn"), last = pick("last_name","ln");
-  var full = pick("name");
-  if(full && !first){ var p = full.split(/\s+/); first = p.shift() || ""; last = last || p.join(" "); }
+  (function prefill(){
+    var first = pick("first_name","fn"), last = pick("last_name","ln"), full = pick("name");
+    if(full && !first){ var p = full.split(/\s+/); first = p.shift() || ""; last = last || p.join(" "); }
+    var set = function(id, v){ if(v) $(id).value = v; };
+    set("f-first", first); set("f-last", last);
+    set("f-email", pick("email","em")); set("f-phone", pick("phone","ph"));
+    set("f-business", pick("business_name","business","company","firm"));
+    set("f-website", pick("website","url"));
+    if(first) $("h-name").textContent = ", " + cap(first);
+  })();
 
-  var out = new URLSearchParams();
-  if(first) out.set("first_name", first);
-  if(last) out.set("last_name", last);
-  if(pick("email","em")) out.set("email", pick("email","em"));
-  if(pick("phone","ph")) out.set("phone", pick("phone","ph"));
-  PASS.forEach(function(k){ if(q.get(k)) out.set(k, q.get(k)); });
-
-  var src = WIDGET + (out.toString() ? "?" + out.toString() : "");
-  var frame = document.getElementById("cal"), loading = document.getElementById("loading");
-  document.getElementById("direct").href = src;
-  frame.id = CALENDAR_ID + "_" + Date.now();   /* the id shape GHL's resizer expects */
-  frame.addEventListener("load", function(){ loading.hidden = true; });
-  frame.src = src;
-
-  /* If the calendar is blocked or slow, give them the direct link in place. */
-  setTimeout(function(){
-    if(loading.hidden) return;
-    loading.textContent = "Still loading. ";
-    var a = document.createElement("a");
-    a.href = src; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Open the calendar in a new tab";
-    loading.appendChild(a);
-  }, 9000);
-
-  if(first){
-    var n = first.slice(0, 30);
-    document.getElementById("h-name").textContent = ", " + n.charAt(0).toUpperCase() + n.slice(1);
+  function getCookie(n){ var m = document.cookie.match(new RegExp("(?:^|; )" + n + "=([^;]*)")); return m ? decodeURIComponent(m[1]) : ""; }
+  function getTracking(){
+    var t = {}; try{ t = JSON.parse(sessionStorage.getItem("ml-tracking") || "{}") || {}; }catch(e){}
+    TRACK_KEYS.forEach(function(k){ if(q.get(k)) t[k] = q.get(k); });
+    try{ sessionStorage.setItem("ml-tracking", JSON.stringify(t)); }catch(e){}
+    if(t.fbclid) t.fbc = "fb.1." + Date.now() + "." + t.fbclid;
+    var fbc = getCookie("_fbc"), fbp = getCookie("_fbp");
+    if(fbc) t.fbc = fbc; if(fbp) t.fbp = fbp;
+    return t;
   }
+
+  function showStep(i, focus){
+    qi = Math.max(0, Math.min(steps.length - 1, i));
+    steps.forEach(function(s, k){ s.hidden = k !== qi; });
+    $("qfill").style.width = ((qi + 1) / steps.length * 100) + "%";
+    $("q-count").textContent = "Question " + (qi + 1) + " of " + steps.length;
+    $("q-back").disabled = qi === 0;
+    if(focus !== false){
+      var f = steps[qi].querySelector("input:not([type=radio]),textarea");
+      if(f) f.focus({preventScroll:true});
+    }
+  }
+  function fields(i){ return [].slice.call(steps[i].querySelectorAll("input,textarea")); }
+  function stepValid(i){
+    var els = fields(i);
+    for(var k = 0; k < els.length; k++){
+      if(els[k].type !== "radio") els[k].value = els[k].value.trim();   /* "required" accepts a lone space */
+      if(!els[k].checkValidity()){ els[k].reportValidity(); return false; }
+    }
+    return true;
+  }
+  function isNo(step){ var c = step.querySelector("input:checked"); return !!(step.dataset.qual && c && c.value === "No"); }
+
+  form.addEventListener("click", function(e){
+    var b = e.target.closest(".qnext");
+    if(b && b.type !== "submit" && stepValid(qi)) showStep(qi + 1);
+  });
+  form.addEventListener("change", function(e){
+    var r = e.target; if(r.type !== "radio") return;
+    var step = r.closest(".qs"), disq = step.querySelector(".disq"), no = isNo(step);
+    if(disq) disq.hidden = !no;
+    if(!no) setTimeout(function(){ if(qi === steps.indexOf(step)) showStep(qi + 1); }, 220);
+  });
+  $("q-back").addEventListener("click", function(){ showStep(qi - 1); });
+
+  /* ---- Step 2: pick a time -------------------------------------------
+     Preferred: this site's own /api/slots and /api/book (see /api), drawn
+     with the same calendar the workshop thank-you page uses. Those need
+     GHL_PRIVATE_TOKEN set on the host. If they are missing or failing, the
+     page falls back to GHL's own embedded widget for the same calendar, so
+     a real time can always be booked. No sample times, ever. */
+  var API = { slots:"/api/slots", book:"/api/book" };
+  var TZ = "America/Chicago";
+  try{ TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || TZ; }catch(e){}
+  var lead = {}, avail = {}, view = null, pickedDate = null, pickedSlot = null;
+  var pad = function(n){ return String(n).padStart(2, "0"); };
+  var D = function(k){ return new Date(k + "T12:00:00Z"); };
+  var dayLong = function(k){ return D(k).toLocaleDateString("en-US", {weekday:"long", month:"long", day:"numeric", timeZone:"UTC"}); };
+  var timeLabel = function(iso){ return new Date(iso).toLocaleTimeString("en-US", {hour:"numeric", minute:"2-digit", timeZone:TZ}); };
+  var tzShort = function(iso){
+    try{ return new Intl.DateTimeFormat("en-US", {timeZone:TZ, timeZoneName:"short"}).formatToParts(new Date(iso))
+           .filter(function(p){ return p.type === "timeZoneName"; })[0].value; }catch(e){ return ""; }
+  };
+  var todayKey = new Intl.DateTimeFormat("en-CA", {timeZone:TZ}).format(new Date());
+  var setMsg = function(t){ $("sched-msg").textContent = t || ""; };
+
+  function renderCal(){
+    var grid = $("cal-grid");
+    $("cal-month").textContent = new Date(Date.UTC(view.y, view.m, 1, 12)).toLocaleDateString("en-US", {month:"long", year:"numeric", timeZone:"UTC"});
+    grid.innerHTML = "";
+    ["S","M","T","W","T","F","S"].forEach(function(l){ var d = document.createElement("div"); d.className = "cal-dow"; d.textContent = l; grid.appendChild(d); });
+    var first = new Date(Date.UTC(view.y, view.m, 1, 12)).getUTCDay();
+    var total = new Date(Date.UTC(view.y, view.m + 1, 0, 12)).getUTCDate();
+    for(var i = 0; i < first; i++){ var s = document.createElement("span"); s.className = "cal-day blank"; grid.appendChild(s); }
+    for(var n = 1; n <= total; n++) (function(key){
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = +key.slice(8); b.className = "cal-day";
+      if(avail[key]){ b.classList.add("open"); b.setAttribute("aria-label", dayLong(key) + ", " + avail[key].length + " times available"); b.addEventListener("click", function(){ pickDate(key); }); }
+      else { b.disabled = true; b.setAttribute("aria-label", dayLong(key) + ", unavailable"); }
+      if(key === todayKey) b.classList.add("today");
+      if(key === pickedDate){ b.classList.add("sel"); b.setAttribute("aria-pressed", "true"); }
+      grid.appendChild(b);
+    })(view.y + "-" + pad(view.m + 1) + "-" + pad(n));
+    var ym = view.y * 12 + view.m, cur = +todayKey.slice(0,4) * 12 + (+todayKey.slice(5,7) - 1);
+    $("cal-prev").disabled = ym <= cur;
+    $("cal-next").disabled = !Object.keys(avail).some(function(k){ return (+k.slice(0,4)) * 12 + (+k.slice(5,7) - 1) > ym; });
+  }
+  function renderTimes(){
+    var host = $("times"); host.innerHTML = "";
+    if(!pickedDate){ $("times-head").textContent = "Select a day"; return; }
+    $("times-head").textContent = dayLong(pickedDate);
+    avail[pickedDate].forEach(function(iso){
+      var row = document.createElement("div"); row.className = "time-row";
+      var t = document.createElement("button"); t.type = "button"; t.className = "time"; t.textContent = timeLabel(iso);
+      row.appendChild(t);
+      if(iso === pickedSlot){
+        t.classList.add("sel"); t.setAttribute("aria-pressed", "true");
+        var go = document.createElement("button"); go.type = "button"; go.className = "btn go"; go.id = "confirm"; go.textContent = "Confirm →";
+        go.addEventListener("click", book); row.appendChild(go);
+      } else t.addEventListener("click", function(){ pickedSlot = iso; setMsg(""); renderTimes(); });
+      host.appendChild(row);
+    });
+  }
+  function pickDate(key){ pickedDate = key; pickedSlot = null; setMsg(""); renderCal(); renderTimes(); }
+  $("cal-prev").addEventListener("click", function(){ view.m--; if(view.m < 0){ view.m = 11; view.y--; } renderCal(); });
+  $("cal-next").addEventListener("click", function(){ view.m++; if(view.m > 11){ view.m = 0; view.y++; } renderCal(); });
+
+  function timed(url, opts){
+    var c = new AbortController(), t = setTimeout(function(){ c.abort(); }, 12000);
+    return fetch(url, Object.assign({signal:c.signal}, opts || {})).then(function(r){ clearTimeout(t); return r; }, function(e){ clearTimeout(t); throw e; });
+  }
+  function loadSlots(){
+    $("times").innerHTML = '<div class="skel"></div>'.repeat(4);
+    return timed(API.slots + "?timezone=" + encodeURIComponent(TZ))
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(data){
+        avail = {};
+        var now = Date.now();
+        Object.keys(data || {}).forEach(function(k){
+          var s = data[k] && data[k].slots;
+          if(!/^\d{4}-\d{2}-\d{2}$/.test(k) || !Array.isArray(s)) return;
+          s = s.filter(function(iso){ return new Date(iso).getTime() > now; });
+          if(s.length) avail[k] = s;
+        });
+        var keys = Object.keys(avail).sort();
+        if(!keys.length) throw new Error("no_slots");
+        pickedDate = keys[0]; pickedSlot = null;
+        view = {y:+keys[0].slice(0,4), m:+keys[0].slice(5,7) - 1};
+        $("cal-tz").textContent = "Times shown in your time zone" + (tzShort(avail[keys[0]][0]) ? " (" + tzShort(avail[keys[0]][0]) + ")" : "") + ".";
+        renderCal(); renderTimes();
+      });
+  }
+  function whenLabel(){ return dayLong(pickedDate) + " at " + timeLabel(pickedSlot) + " " + tzShort(pickedSlot); }
+  function book(){
+    var btn = $("confirm"); btn.disabled = true; btn.textContent = "Booking…"; setMsg("");
+    timed(API.book, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({
+      firstName:lead.first_name, lastName:lead.last_name, email:lead.email, phone:lead.phone,
+      startTime:pickedSlot, timezone:TZ })})
+      .then(function(r){ if(!r.ok){ var e = new Error("book_failed"); e.status = r.status; throw e; } return r.json(); })
+      .then(function(){
+        try{ if(window.fbq) window.fbq("track", "Schedule", {content_name:"Multiply Your Business Call"}); }catch(e){}
+        try{ if(window.va) window.va("event", {name:"call_booked"}); }catch(e){}
+        var b = document.createElement("b"); b.textContent = whenLabel();
+        $("booked-when").textContent = ""; $("booked-when").appendChild(b);
+        $("view-cal").hidden = true; $("booked").hidden = false;
+        $("book-step").textContent = "Confirmed"; $("fine").textContent = "";
+        $("book").scrollIntoView({behavior:"smooth", block:"start"});
+      })
+      .catch(function(e){
+        if(e.status === 409){
+          loadSlots().then(function(){ setMsg("That time was just taken. Pick another."); }, useWidget);
+        } else useWidget("We could not confirm that time here. Pick it below to finish booking.");
+      });
+  }
+  function useWidget(note){
+    var src = WIDGET + (calParams(lead).toString() ? "?" + calParams(lead).toString() : "");
+    var frame = $("cal") || document.querySelector("#widget iframe"), loading = $("loading");
+    $("native").hidden = true; $("widget").hidden = false;
+    $("fine").textContent = (typeof note === "string" ? note + " " : "") + "Times show in your own time zone. Calendar not loading? ";
+    var a = document.createElement("a");
+    a.href = src; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Open it in a new tab";
+    $("fine").appendChild(a); $("fine").appendChild(document.createTextNode("."));
+    if(frame.src) return;
+    frame.id = CALENDAR_ID + "_" + Date.now();   /* the id shape GHL's resizer expects */
+    frame.addEventListener("load", function(){ loading.hidden = true; });
+    frame.src = src;
+    setTimeout(function(){
+      if(loading.hidden) return;
+      loading.textContent = "Still loading. ";
+      var l = a.cloneNode(true); l.textContent = "Open the calendar in a new tab"; loading.appendChild(l);
+    }, 9000);
+  }
+  function showCalendar(d){
+    lead = d;
+    $("view-form").hidden = true; $("view-cal").hidden = false;
+    $("book-step").textContent = "Step 2 of 2 · Pick your time";
+    $("c-name").textContent = d.first_name ? ", " + cap(d.first_name) : "";
+    $("fine").textContent = "Thirty minutes. Only book a time you can make.";
+    $("book").scrollIntoView({behavior:"smooth", block:"start"});
+    loadSlots().catch(function(){ useWidget(); });
+  }
+  function calParams(d){
+    var p = new URLSearchParams();
+    ["first_name","last_name","email","phone"].forEach(function(k){ if(d[k]) p.set(k, d[k]); });
+    TRACK_KEYS.forEach(function(k){ if(q.get(k)) p.set(k, q.get(k)); });
+    return p;
+  }
+
+  form.addEventListener("submit", function(event){
+    event.preventDefault();
+    if(qi < steps.length - 1){ if(stepValid(qi)) showStep(qi + 1); return; }
+    for(var i = 0; i < steps.length; i++){
+      if(!fields(i).every(function(el){ return el.checkValidity(); })){ showStep(i); stepValid(i); return; }
+      if(isNo(steps[i])){ showStep(i, false); return; }
+    }
+    if(!stepValid(qi)) return;
+
+    var data = {}; new FormData(form).forEach(function(v, k){ data[k] = String(v).trim(); });
+    var payload = Object.assign({}, data, getTracking(), {
+      form_name: "Multiply Local — Workshop Call Application",
+      source: "multiply-local-workshop-call-usa",
+      /* the names the /book form already sends, so its workflow mapping still fits */
+      annual_revenue: data.revenue, monthly_revenue: data.revenue, marketing_budget: data.budget,
+      landing_page: location.origin + location.pathname
+    });
+
+    var button = $("submit-btn"), status = $("form-status");
+    button.disabled = true; status.textContent = "Saving your answers…";
+    var done = function(){
+      try{ sessionStorage.setItem(DONE_KEY, JSON.stringify({first_name:data.first_name, last_name:data.last_name, email:data.email, phone:data.phone})); }catch(e){}
+      try{ if(window.fbq) window.fbq("track", "Lead", {content_name:"Workshop Call Application"}); }catch(e){}
+      try{ if(window.va) window.va("event", {name:"call_application"}); }catch(e){}
+      status.textContent = ""; button.disabled = false;
+      showCalendar({first_name:data.first_name, last_name:data.last_name, email:data.email, phone:data.phone});
+    };
+    /* A webhook hiccup must never stand between a qualified owner and the
+       calendar, so the calendar opens either way. */
+    var sent = false, go = function(){ if(!sent){ sent = true; done(); } };
+    try{
+      fetch(WEBHOOK_URL, {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"},
+                          body:new URLSearchParams(payload).toString(), keepalive:true}).then(go, go);
+    }catch(e){ go(); }
+    setTimeout(go, 6000);
+  });
+
+  /* Someone who already answered and reloads goes straight back to the calendar. */
+  var prior = null;
+  try{ prior = JSON.parse(sessionStorage.getItem(DONE_KEY) || "null"); }catch(e){}
+  if(prior && prior.email) showCalendar(prior);
+  else showStep(0, false);
 })();
 </script>
 <script src="https://link.msgsndr.com/js/form_embed.js"></script>
